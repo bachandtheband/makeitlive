@@ -30,8 +30,9 @@ Pushing to `main` deploys to production through the Vercel ↔ GitHub integratio
 
 ## Theme
 
-Light is the default; the sun/moon button switches to dark and the choice is remembered. Colours are tokens
-at the top of `styles.css` (`:root` = light, `html[data-theme="dark"]` = dark). `/brand-kit` is always dark.
+Light is **always** the default: the sun/moon button switches to dark for the current visit only, and every new
+visit starts light (the OS dark-mode setting is ignored). Colours are tokens at the top of `styles.css`
+(`:root` = light, `html[data-theme="dark"]` = dark). `/brand-kit` follows the same theme.
 
 ## Hero video
 
@@ -41,6 +42,71 @@ text, logo and nav switch to white automatically. No file → the pastel (light)
 - Landscape 16:9, 1920×1080, 10–20 s seamless loop, no audio
 - Keep it under ~8 MB (H.264 `.mp4`, ~2–3 Mbit/s; the `.webm` can be smaller)
 - Skipped automatically for visitors with reduced-motion or data-saver on
+
+## Photos & video
+
+Where things go (the folders already exist):
+
+```
+assets/
+  video/          hero.mp4 + hero.webm (homepage background, picked up automatically)
+    dj/  live-musicians/  live-bands/  performers/  photo-video/     short clips for those pages
+  photos/
+    general/      homepage + "who for" imagery
+    dj/  live-musicians/  live-bands/  performers/  photo-video/     one folder per service page
+    team/         portraits of the team
+  references/     client / partner logos (SVG, or PNG with transparent background)
+media-inbox/      LOCAL ONLY, ignored by git: drop your untouched originals here
+  photos/<same folders as above>/     video/
+```
+
+**Workflow for photos**
+
+1. Put the originals in `media-inbox/photos/<folder>/` (e.g. `media-inbox/photos/dj/`).
+2. Run `./scripts/optimize-photos.sh`. It writes web-ready WebP files into `assets/photos/<folder>/`: max 2000 px,
+   quality 80, **location/EXIF data stripped** (important for guest photos). Needs `brew install webp` once.
+3. Tell Claude which file goes in which slot (or replace the dashed `.slot` block yourself with
+   `<img src="/assets/photos/dj/dj-anna.webp" alt="DJ Anna at a wedding" loading="lazy" width="2000" height="1333">`).
+
+> Dropping files in the folders does **not** show them by itself. Only `assets/video/hero.mp4`/`hero.webm` is picked
+> up automatically; everything else has to be placed in a page.
+
+**Videos**
+
+Install once: `brew install ffmpeg`. Then, from the project folder:
+
+```bash
+# homepage hero: 1080p, no audio, ~8 MB max  → assets/video/hero.mp4 (+ hero.webm)
+ffmpeg -i media-inbox/video/hero-original.mov -an -vf "scale=1920:-2,fps=30" \
+  -c:v libx264 -crf 26 -preset slow -pix_fmt yuv420p -movflags +faststart assets/video/hero.mp4
+ffmpeg -i media-inbox/video/hero-original.mov -an -vf "scale=1920:-2,fps=30" \
+  -c:v libvpx-vp9 -crf 34 -b:v 0 assets/video/hero.webm
+
+# short page clips (5-15 s loops), 720p  → assets/video/<page>/clip-name.mp4
+ffmpeg -i media-inbox/video/clip.mov -an -vf "scale=1280:-2,fps=30" \
+  -c:v libx264 -crf 28 -preset slow -pix_fmt yuv420p -movflags +faststart assets/video/dj/hero-loop.mp4
+```
+
+- **Never commit originals.** GitHub rejects files over 100 MB and the repo slows down for everyone. Originals stay
+  in `media-inbox/` (git-ignored) or on a drive.
+- **Full aftermovies / long films (more than ~15 s with sound): upload to YouTube or Vimeo and embed them.** Hosting
+  them on the site is slow and expensive. Same for full DJ sets: use SoundCloud/Mixcloud embeds.
+- Self-hosted clips are for short, silent loops (about 8 MB or less each).
+
+**Suggested names per page slot** (lowercase, hyphens, no spaces)
+
+| Page | Slot | File |
+| --- | --- | --- |
+| Home | Hero background | `assets/video/hero.mp4` + `hero.webm` |
+| `/dj` | Hero loop | `assets/video/dj/hero-loop.mp4` |
+| `/dj` | Roster portraits | `assets/photos/dj/<dj-name>.webp` (portrait 4:5) |
+| `/live-musicians` | Hero photo | `assets/photos/live-musicians/hero.webp` (portrait 4:5) |
+| `/live-musicians` | Format photos / moments | `assets/photos/live-musicians/solo.webp`, `duo.webp`, … |
+| `/live-bands` | Per band | `assets/photos/live-bands/<band-name>.webp` + `assets/video/live-bands/<band-name>.mp4` |
+| `/performers` | Act loops | `assets/video/performers/<act-name>.mp4` (5-10 s) |
+| `/photo-video` | Portfolio | `assets/photos/photo-video/portfolio-01.webp`, `portfolio-02.webp`, … |
+| Anywhere | Client logos | `assets/references/<client>.svg` |
+| Brand kit | Logos | generated, see *Brand kit* below |
 
 ## Contact form
 

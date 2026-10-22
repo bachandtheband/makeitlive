@@ -1,6 +1,7 @@
 MAKE IT LIVE — BRAND KIT
 ========================
-Belgian event agency. The total experience of your event, under one roof.
+Belgian event agency for live entertainment: DJs, live artists, bands, performers, photo & video.
+Tagline: You bring the people. We Make It Live.
 Online version: https://makeitlive.agency/brand-kit   |   Questions or other formats: hello@makeitlive.agency
 
 LOGO FILES

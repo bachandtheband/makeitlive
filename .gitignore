@@ -3,3 +3,7 @@
 # Internal source material — not for the public repo
 *.pdf
 574fa636-*.jpg
+
+# Local-only: raw photos/videos before they are optimised. Never commit originals (GitHub blocks files >100 MB).
+media-inbox/*
+!media-inbox/README.md

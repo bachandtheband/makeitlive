@@ -11,5 +11,7 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
     "run_worker_first": ["/api/*"]
-  }
+  },
+  // Required by `wrangler preview` (branch/pull-request previews). Empty = no preview-specific settings.
+  "previews": {}
 }

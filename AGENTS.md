@@ -54,7 +54,12 @@ five unlisted service pages (`dj.html`, `live-musicians.html`, `live-bands.html`
 5. Commit with a short English message (`Update DJ page text`), push the branch and **open a pull request** to `main`.
    Write the pull request description in plain Dutch: what changed, on which pages.
 6. Tell Bacha (in Dutch): what changed, which page to look at, and **"Om dit live te zetten klik je op 'Merge pull
-   request'."** If a preview link appears on the pull request, give it to him. If there is none, say so.
+   request'."** Every pull request gets a **preview of the whole site** after about 1-3 minutes, at
+   `https://<branch-name>-makeitlive.habrakenteun.workers.dev` (slashes in the branch name become `-`, e.g. branch
+   `content/new-role` → `content-new-role-makeitlive.habrakenteun.workers.dev`). Cloudflare also posts it as a comment on
+   the pull request, but that comment can lag, so use the address above. Check it loads and shows the change before you
+   tell Bacha it is ready. Only the pages in the pull request differ from the live site; the preview is not indexed by
+   Google but anyone with the link can open it.
 7. Bacha publishes by merging. You never publish yourself.
 
 If something goes wrong, do **not** try to fix hosting or deployment. Offer to undo your change

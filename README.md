@@ -17,8 +17,11 @@ Cloudflare/GitHub settings, design and anything touching privacy are for Tom.
 text, heavy or raw media, no third-party scripts, and **no changes to Tom-only files** compared with `origin/main`).
 Tom's own changes to those files will show up there as errors: that is expected, the check is for Bacha's branches.
 
-Tip for Tom: in Cloudflare → Workers & Pages → makeitlive → Settings → Builds, enable builds for non-production
-branches so every pull request gets a preview link Bacha can look at before he merges.
+**Previews:** every branch/pull request gets its own preview of the full site at
+`https://<branch-with-dashes>-makeitlive.habrakenteun.workers.dev` (Cloudflare → Workers & Pages → makeitlive →
+Settings → Builds: "Builds for Preview branches" on; preview command `npx wrangler preview`). This needs the (empty)
+`"previews": {}` block in `wrangler.jsonc`: without it the preview build fails with "missing a `previews` block".
+Previews are public-by-link and carry `X-Robots-Tag: noindex`.
 
 ## Editing content
 

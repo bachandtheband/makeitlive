@@ -21,12 +21,35 @@ Anything not ready yet says **Setting the stage**.
 ## Run locally
 
 ```bash
-python3 -m http.server 4173
+python3 -m http.server 4173        # quick look at the pages (no /api, no clean URLs)
+sh scripts/build-cloudflare.sh && npx wrangler pages dev dist   # the real thing: clean URLs, headers, contact API
 ```
 
-## Deploy
+## Deploy (Cloudflare Pages)
 
-Pushing to `main` deploys to production through the Vercel ↔ GitHub integration.
+The site is static files plus one small function (`functions/api/contact.js`), hosted on **Cloudflare Pages**.
+`scripts/build-cloudflare.sh` copies only the public files into `dist/` (README, scripts and workflows stay out).
+
+**Cloudflare settings:** production branch `main` · build command `sh scripts/build-cloudflare.sh` ·
+build output directory `dist` · root directory `/` (the `functions/` folder must stay in the repo root).
+
+There are two ways to get GitHub → Cloudflare, pick **one**:
+
+1. **Cloudflare's Git integration** (Workers & Pages → Create → Pages → Connect to Git). The owner of the GitHub
+   account that owns the repo has to authorise the Cloudflare GitHub app once; after that every push to `main` goes
+   live and every pull request gets a preview URL.
+2. **GitHub Actions** (`.github/workflows/cloudflare-pages.yml`). Cloudflare never touches GitHub: the repo owner adds
+   two secrets (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) and every push to `main` deploys. No PR previews.
+
+**Switching the domain from Vercel** (do it in this order, the site stays up until step 4):
+
+1. Deploy once and test on the `*.pages.dev` address (pages, `/privacy`, `/?preview`, `/api/contact`).
+2. Pages project → Custom domains → add `www.makeitlive.agency` and `makeitlive.agency`.
+3. Cloudflare DNS: remove the old Vercel records (`A 216.198.79.1` / the `CNAME … vercel-dns…` on `www`) so Pages can
+   create its own, and add a Redirect Rule `makeitlive.agency/*` → `https://www.makeitlive.agency/$1` (301).
+4. Remove the domain from the Vercel project. Done.
+
+Unknown addresses return the real `404.html` (without it Pages would serve the homepage with a 200).
 
 ## Theme
 
@@ -110,15 +133,18 @@ ffmpeg -i media-inbox/video/clip.mov -an -vf "scale=1280:-2,fps=30" \
 
 ## Contact form
 
-The form posts to `api/contact.js` (a Vercel function) which emails `hello@makeitlive.agency` through
-[Resend](https://resend.com). Until it is configured the function answers 503 and the page falls back to a
-prefilled `mailto:` link, so no enquiry is lost. To switch it on, add in Vercel → Settings → Environment Variables:
+The form posts to `functions/api/contact.js` (a Cloudflare Pages Function) which emails `hello@makeitlive.agency`
+through [Resend](https://resend.com). Until it is configured the function answers 503 and the page falls back to a
+prefilled `mailto:` link, so no enquiry is lost. To switch it on, add in Cloudflare → Workers & Pages → your project →
+Settings → Variables and Secrets (for *Production*):
 
 | Variable | Required | Value |
 | --- | --- | --- |
-| `RESEND_API_KEY` | yes | API key from Resend (and verify `makeitlive.agency` there) |
+| `RESEND_API_KEY` | yes | API key from Resend, added as a **secret** (and verify `makeitlive.agency` there) |
 | `CONTACT_TO` | no | inbox that receives enquiries (default `hello@makeitlive.agency`) |
 | `CONTACT_FROM` | no | verified sender (default `Make It Live <noreply@makeitlive.agency>`) |
+
+Free plan limit: 100,000 function requests per day (plain page views do not count).
 
 ## Draft sections (references + testimonials)
 
@@ -130,7 +156,7 @@ two blocks into `index.html` between *WHO FOR* and *CONTACT* and delete the part
 ## Unlisted pages
 
 `/join` (`join.html`) holds the open positions. Nothing on the site links to it: it is not in the navigation,
-footer or sitemap, and it is `noindex, nofollow` (meta tag + `X-Robots-Tag` header in `vercel.json`) so search
+footer or sitemap, and it is `noindex, nofollow` (meta tag + `X-Robots-Tag` header in `_headers`) so search
 engines skip it. Share the URL directly with candidates. `/brand-kit` and `/partials/*` are treated the same way.
 Unlisted is not private: anyone with the link can open it.
 
@@ -146,8 +172,8 @@ so the team can click through.
   calm "Setting the stage").
 - Fill a slot by replacing the whole `<div class="slot …">…</div>` with the real image/video/text.
 - To publish a page: replace its slots, remove the yellow `.pg-bar`, then (1) delete `.core-link` generation in
-  `main.js` (preview block) and instead wrap the card in `<a href="/dj">`, and (2) drop its path from the
-  `noindex` rule in `vercel.json`.
+  `main.js` (preview block) and instead wrap the card in `<a href="/dj">`, and (2) drop its path from
+  `_headers`.
 - The contact CTA on each page opens the form with that service pre-selected (`/?service=DJ#contact`).
 
 ## Brand kit

@@ -1,0 +1,21 @@
+# Cloudflare Pages response headers (replaces the "headers" section of vercel.json)
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Unlisted pages: kept out of search engines
+/join
+  X-Robots-Tag: noindex, nofollow
+/dj
+  X-Robots-Tag: noindex, nofollow
+/live-musicians
+  X-Robots-Tag: noindex, nofollow
+/live-bands
+  X-Robots-Tag: noindex, nofollow
+/performers
+  X-Robots-Tag: noindex, nofollow
+/photo-video
+  X-Robots-Tag: noindex, nofollow
+/partials/*
+  X-Robots-Tag: noindex, nofollow

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pagina niet gevonden — Make It Live</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f6f2ec">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+
+  <script>
+    window.MIL_TITLES = { nl: 'Pagina niet gevonden — Make It Live', en: 'Page not found — Make It Live' };
+    (function () {
+      var lang = 'nl', theme = 'light', root = document.documentElement;
+      try {
+        var saved = localStorage.getItem('mil-lang');
+        if (saved === 'nl' || saved === 'en') lang = saved;
+        else if (!/^nl\b/i.test(navigator.language || '')) lang = 'en';
+        if (sessionStorage.getItem('mil-theme') === 'dark') theme = 'dark';
+      } catch (e) {}
+      root.lang = lang;
+      root.dataset.theme = theme;
+      root.classList.add('js');
+    })();
+  </script>
+</head>
+<body class="no-hero-logo">
+  <header class="nav scrolled">
+    <a class="nav-mark" href="/" aria-label="Make It Live — home">
+      <span class="nav-mark-text">MAKE IT LIVE</span><span class="nav-mark-bar"></span>
+    </a>
+    <div class="lang" style="margin-left:auto" role="group" aria-label="Language">
+      <button type="button" data-set-lang="nl">NL</button>
+      <span aria-hidden="true">/</span>
+      <button type="button" data-set-lang="en">EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="section legal-hero" style="min-height:70vh">
+      <p class="eyebrow">404</p>
+      <h1 class="statement">
+        <span data-l="nl">Hier is nog <em>niets</em>.</span>
+        <span data-l="en">Nothing here <em>yet</em>.</span>
+      </h1>
+      <p class="lede">
+        <span data-l="nl">Deze pagina bestaat niet (meer). Setting the stage: misschien is ze verhuisd of komt ze er nog aan.</span>
+        <span data-l="en">This page doesn't exist (anymore). Setting the stage: maybe it moved, or it's still on its way.</span>
+      </p>
+      <p style="margin-top:32px"><a class="btn" href="/"><span data-l="nl">Terug naar de homepage</span><span data-l="en">Back to the homepage</span> <span aria-hidden="true">→</span></a></p>
+    </section>
+  </main>
+
+  <script src="/main.js" defer></script>
+</body>
+</html>

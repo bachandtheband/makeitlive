@@ -11,3 +11,4 @@ media-inbox/*
 # Build output
 dist/
 .wrangler/
+node_modules/

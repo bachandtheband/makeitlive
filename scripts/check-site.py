@@ -23,7 +23,7 @@ ALLOWED_MISSING = {'/assets/video/hero.mp4', '/assets/video/hero.webm'}  # optio
 MAX_PHOTO_KB, MAX_VIDEO_MB, MAX_FILE_MB = 600, 10, 25
 
 # Only Tom changes these (hard stop). Matching is on the path relative to the project root.
-PROTECTED = ['wrangler.jsonc', 'worker/*', 'scripts/*', '.github/*', '_headers', '.gitignore', 'main.js',
+PROTECTED = ['wrangler.jsonc', 'package.json', 'package-lock.json', 'worker/*', 'scripts/*', '.github/*', '_headers', '.gitignore', 'main.js',
              'assets/brand/*', 'assets/og-light.jpg', 'AGENTS.md', 'favicon.svg']
 DESIGN = ['*.css']  # visual design: allowed only when explicitly asked, flagged as a warning
 

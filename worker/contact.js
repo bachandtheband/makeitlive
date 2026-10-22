@@ -1,9 +1,9 @@
-// Contact form handler: Cloudflare Pages Function (route: POST /api/contact).
+// Contact form handler for POST /api/contact (called from worker/index.js).
 //
 // Sends the enquiry to CONTACT_TO via Resend (https://resend.com). Until RESEND_API_KEY is set it answers 503
 // and the page falls back to a prefilled mailto: link, so nothing is lost while the mailbox is being set up.
 //
-// Settings (Cloudflare dashboard → Workers & Pages → your project → Settings → Variables and Secrets):
+// Settings (Cloudflare dashboard → Workers & Pages → makeitlive → Settings → Variables and Secrets):
 //   RESEND_API_KEY   required — add as a *secret*
 //   CONTACT_FROM     optional — verified sender, default "Make It Live <noreply@makeitlive.agency>"
 //   CONTACT_TO       optional — inbox that receives enquiries, default "hello@makeitlive.agency"
@@ -18,13 +18,12 @@ const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>
 const reply = (status, body, extra = {}) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...extra }
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', ...extra }
   });
 
-// Anything other than POST
-export const onRequest = () => reply(405, { error: 'method_not_allowed' }, { Allow: 'POST' });
+export async function handleContact(request, env) {
+  if (request.method !== 'POST') return reply(405, { error: 'method_not_allowed' }, { Allow: 'POST' });
 
-export async function onRequestPost({ request, env }) {
   let body = {};
   try { body = (await request.json()) || {}; } catch (e) { body = {}; }
 

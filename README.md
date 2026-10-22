@@ -22,34 +22,31 @@ Anything not ready yet says **Setting the stage**.
 
 ```bash
 python3 -m http.server 4173        # quick look at the pages (no /api, no clean URLs)
-sh scripts/build-cloudflare.sh && npx wrangler pages dev dist   # the real thing: clean URLs, headers, contact API
+sh scripts/build-cloudflare.sh && npx wrangler dev   # the real thing: clean URLs, headers, 404 page, contact API
 ```
 
-## Deploy (Cloudflare Pages)
+## Deploy (Cloudflare Workers + static assets)
 
-The site is static files plus one small function (`functions/api/contact.js`), hosted on **Cloudflare Pages**.
-`scripts/build-cloudflare.sh` copies only the public files into `dist/` (README, scripts and workflows stay out).
+The site is static files plus one small function, hosted as a **Cloudflare Worker** named `makeitlive` (config in
+`wrangler.jsonc`). `scripts/build-cloudflare.sh` copies only the public files into `dist/`, which is what gets served
+(README, scripts, workflows and the Worker code stay out). Requests under `/api/*` run `worker/index.js`.
 
-**Cloudflare settings:** production branch `main` · build command `sh scripts/build-cloudflare.sh` ·
-build output directory `dist` · root directory `/` (the `functions/` folder must stay in the repo root).
+**Cloudflare settings** (Workers & Pages → makeitlive → Settings → Builds):
+production branch `main` · **build command** `sh scripts/build-cloudflare.sh` · **deploy command** `npx wrangler deploy`
+· root directory `/`. Do not add `--assets` flags to the deploy command: the folder comes from `wrangler.jsonc`.
 
-There are two ways to get GitHub → Cloudflare, pick **one**:
+Every push to `main` goes live. Pushes to other branches get a preview version when "non-production branch builds"
+are enabled in the same settings page.
 
-1. **Cloudflare's Git integration** (Workers & Pages → Create → Pages → Connect to Git). The owner of the GitHub
-   account that owns the repo has to authorise the Cloudflare GitHub app once; after that every push to `main` goes
-   live and every pull request gets a preview URL.
-2. **GitHub Actions** (`.github/workflows/cloudflare-pages.yml`). Cloudflare never touches GitHub: the repo owner adds
-   two secrets (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) and every push to `main` deploys. No PR previews.
+An alternative to Cloudflare's own Git connection is `.github/workflows/cloudflare-deploy.yml` (GitHub Actions; needs
+the secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`; inert without them). Use one route, never both.
 
-**Switching the domain from Vercel** (do it in this order, the site stays up until step 4):
+**Domain** (Worker → Settings → Domains & Routes → Add → Custom domain): `www.makeitlive.agency` and
+`makeitlive.agency`. If the domain still points at Vercel, first remove the old DNS records (`A 216.198.79.1` and the
+`CNAME … vercel-dns…` on `www`) so Cloudflare can create its own, add a Redirect Rule
+`makeitlive.agency/*` → `https://www.makeitlive.agency/$1` (301), and remove the domain from the Vercel project.
 
-1. Deploy once and test on the `*.pages.dev` address (pages, `/privacy`, `/?preview`, `/api/contact`).
-2. Pages project → Custom domains → add `www.makeitlive.agency` and `makeitlive.agency`.
-3. Cloudflare DNS: remove the old Vercel records (`A 216.198.79.1` / the `CNAME … vercel-dns…` on `www`) so Pages can
-   create its own, and add a Redirect Rule `makeitlive.agency/*` → `https://www.makeitlive.agency/$1` (301).
-4. Remove the domain from the Vercel project. Done.
-
-Unknown addresses return the real `404.html` (without it Pages would serve the homepage with a 200).
+Unknown addresses return the real `404.html` with status 404 (`not_found_handling` in `wrangler.jsonc`).
 
 ## Theme
 
@@ -133,10 +130,10 @@ ffmpeg -i media-inbox/video/clip.mov -an -vf "scale=1280:-2,fps=30" \
 
 ## Contact form
 
-The form posts to `functions/api/contact.js` (a Cloudflare Pages Function) which emails `hello@makeitlive.agency`
+The form posts to `/api/contact`, handled by `worker/contact.js` (run by `worker/index.js`), which emails `hello@makeitlive.agency`
 through [Resend](https://resend.com). Until it is configured the function answers 503 and the page falls back to a
-prefilled `mailto:` link, so no enquiry is lost. To switch it on, add in Cloudflare → Workers & Pages → your project →
-Settings → Variables and Secrets (for *Production*):
+prefilled `mailto:` link, so no enquiry is lost. To switch it on, add in Cloudflare → Workers & Pages → makeitlive →
+Settings → Variables and Secrets:
 
 | Variable | Required | Value |
 | --- | --- | --- |
@@ -144,7 +141,7 @@ Settings → Variables and Secrets (for *Production*):
 | `CONTACT_TO` | no | inbox that receives enquiries (default `hello@makeitlive.agency`) |
 | `CONTACT_FROM` | no | verified sender (default `Make It Live <noreply@makeitlive.agency>`) |
 
-Free plan limit: 100,000 function requests per day (plain page views do not count).
+Free plan limit: 100,000 Worker requests per day. Plain page views are served as static assets and do not count.
 
 ## Draft sections (references + testimonials)
 

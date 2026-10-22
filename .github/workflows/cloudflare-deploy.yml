@@ -1,4 +1,4 @@
-# OPTIONAL deploy route: deploys main to Cloudflare Pages from GitHub Actions.
+# OPTIONAL deploy route: deploys main to the Cloudflare Worker "makeitlive" from GitHub Actions.
 #
 # Use this ONLY if you do not connect the repo through Cloudflare's own Git integration (never both, or every
 # push deploys twice). It needs no access from Cloudflare to GitHub: the repo owner adds two secrets under
@@ -6,9 +6,9 @@
 #   CLOUDFLARE_API_TOKEN   (Cloudflare → My Profile → API Tokens → template "Edit Cloudflare Workers"
 #                           or a custom token with "Account · Cloudflare Pages · Edit")
 #   CLOUDFLARE_ACCOUNT_ID  (Cloudflare dashboard → Workers & Pages → right sidebar)
-# The Pages project (name below) must exist first: `npx wrangler pages project create makeitlive`.
+# Uses wrangler.jsonc (Worker name, static assets from ./dist, /api/* handled by worker/index.js).
 # Without the secrets this workflow does nothing.
-name: Deploy to Cloudflare Pages
+name: Deploy to Cloudflare Workers
 
 on:
   push:
@@ -37,4 +37,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=makeitlive --branch=main
+          command: deploy

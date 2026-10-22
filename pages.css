@@ -196,3 +196,8 @@ html.hide-notes .pack li { border-style: solid; border-color: var(--line); color
 html.hide-notes .bt-vis { display: none; }
 html.hide-notes .bt-team { display: inline; }
 html.hide-notes .sl-chips li:not(.is-on) { border-style: solid; border-color: var(--line); color: var(--ink-3); }
+
+/* Real media in place of a dashed slot:  <figure class="slot-media ar-4x5"><img src="…" alt="…"></figure>
+   (ar-16x9 / ar-4x5 / ar-1x1 / ar-21x9 set the shape; video: <video src="…" muted loop playsinline autoplay>) */
+.slot-media { margin: 0; border-radius: 6px; overflow: hidden; background: var(--bg-2); }
+.slot-media img, .slot-media video { display: block; width: 100%; height: 100%; object-fit: cover; }

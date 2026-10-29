@@ -1,5 +1,6 @@
 {
-  // Worker "makeitlive": serves ./dist as static files; /api/* runs worker/index.js.
+  // Worker "makeitlive": serves ./dist as static files; /api/* and /assets/video/* run worker/index.js
+  // (videos need byte-range support for Safari/iOS, which static assets do not provide).
   // Cloudflare build settings: build command  `sh scripts/build-cloudflare.sh`  (creates ./dist)
   //                            deploy command `npx wrangler deploy`
   "name": "makeitlive",
@@ -10,7 +11,7 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/assets/video/*"]
   },
   // Required by `wrangler preview` (branch/pull-request previews). Empty = no preview-specific settings.
   "previews": {}

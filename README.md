@@ -79,6 +79,8 @@ text, logo and nav switch to white automatically. No file → the pastel (light)
 - Landscape 16:9, 1920×1080, 10–20 s seamless loop, no audio
 - Keep it under ~8 MB (H.264 `.mp4`, ~2–3 Mbit/s; the `.webm` can be smaller)
 - Skipped automatically for visitors with reduced-motion or data-saver on
+- Videos under `/assets/video/*` are served through `worker/index.js` with byte-range support (206). Static assets only
+  answer with the full file (200), and Safari/iOS then refuse to play the video. Keep videos in that folder.
 
 ## Photos & video
 

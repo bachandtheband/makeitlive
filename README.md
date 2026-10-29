@@ -150,16 +150,27 @@ ffmpeg -i media-inbox/video/clip.mov -an -vf "scale=1280:-2,fps=30" \
 
 ## Contact form
 
-The form posts to `/api/contact`, handled by `worker/contact.js` (run by `worker/index.js`), which emails `bookings@makeitlive.agency`
-through [Resend](https://resend.com). Until it is configured the function answers 503 and the page falls back to a
-prefilled `mailto:` link, so no enquiry is lost. To switch it on, add in Cloudflare → Workers & Pages → makeitlive →
-Settings → Variables and Secrets:
+The form posts to `/api/contact`, handled by `worker/contact.js` (run by `worker/index.js`). It emails the enquiry to
+`bookings@makeitlive.agency` through [Resend](https://resend.com) and, for visitors who pass Cloudflare **Turnstile**
+(an invisible anti-spam check), also sends them a short confirmation (Dutch or English, Reply-To `bookings@`).
+Without a Resend key the function answers 503 and the page falls back to a prefilled `mailto:` link, so no enquiry is
+lost. Without Turnstile the form still works, minus the confirmation.
 
-| Variable | Required | Value |
+Settings in Cloudflare → Workers & Pages → makeitlive → Settings → Variables and Secrets. Add them as type **Secret**
+(plain variables are wiped by the next deploy, secrets are kept):
+
+| Name | Needed for | Value |
 | --- | --- | --- |
-| `RESEND_API_KEY` | yes | API key from Resend, added as a **secret** (and verify `makeitlive.agency` there) |
-| `CONTACT_TO` | no | inbox that receives enquiries (default `bookings@makeitlive.agency`) |
-| `CONTACT_FROM` | no | verified sender (default `Make It Live <noreply@makeitlive.agency>`) |
+| `RESEND_API_KEY` | any email | API key from Resend, restricted to sending on `mail.makeitlive.agency` |
+| `TURNSTILE_SECRET_KEY` | bot check + confirmation | secret key of the Turnstile widget |
+| `CONTACT_TO` | optional | default `bookings@makeitlive.agency` |
+| `CONTACT_FROM` | optional | default `Make It Live <noreply@mail.makeitlive.agency>` (domain verified in Resend) |
+
+**Turnstile order matters.** The public *site key* goes into `index.html` (`<div id="ts-slot" data-sitekey="…">`) and is
+deployed first; only then add `TURNSTILE_SECRET_KEY`. With the secret set but no site key on the page, every
+submission is rejected (403) and visitors only get the mailto fallback. The Turnstile script is loaded only once a
+visitor starts using the form (`main.js`). Test keys for local work: site key `1x00000000000000000000BB`,
+secret `1x0000000000000000000000000000000AA` (always pass).
 
 Free plan limit: 100,000 Worker requests per day. Plain page views are served as static assets and do not count.
 

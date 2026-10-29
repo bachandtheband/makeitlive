@@ -674,6 +674,7 @@ html:not([data-theme="dark"]) .core-card p { color: rgba(23, 22, 26, 0.78); }
 .pill input:checked + span { background: var(--blue-btn); border-color: var(--blue-btn); color: #fff; }
 .pill input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 3px; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.ts-slot { grid-column: 1 / -1; }
 .form-foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; }
 .form-note { margin: 0; font-size: 12.5px; color: var(--ink-3); max-width: 46ch; }
 .form-status { grid-column: 1 / -1; margin: 0; font-size: 15px; min-height: 1.4em; }

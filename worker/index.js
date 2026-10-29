@@ -51,9 +51,9 @@ async function serveWithRange(request, env) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const { pathname } = new URL(request.url);
-    if (pathname === '/api/contact') return handleContact(request, env);
+    if (pathname === '/api/contact') return handleContact(request, env, ctx);
     if (pathname.startsWith('/api/')) return notFound();
     if (pathname.startsWith('/assets/video/') && (request.method === 'GET' || request.method === 'HEAD')) {
       return serveWithRange(request, env);

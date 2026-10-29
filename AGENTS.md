@@ -158,7 +158,7 @@ silent loop use
 
 Say to Bacha in Dutch that this one is for Tom, and why. Do not try a workaround. This covers:
 
-- **E-mail, the contact form, domain, DNS, Cloudflare, GitHub settings, passwords, API keys, secrets.** Never write a
+- **E-mail, the contact form (it also loads Cloudflare Turnstile, the only third-party script on the site), domain, DNS, Cloudflare, GitHub settings, passwords, API keys, secrets.** Never write a
   key, token or password into any file or message. The contact address `bookings@makeitlive.agency` appears in several
   files and in the form code: changing it is a **configuration** change for Tom, not a text edit.
 - Files `wrangler.jsonc`, `worker/`, `scripts/`, `.github/`, `_headers`, `main.js`, `.gitignore`, `favicon.svg`,

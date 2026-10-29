@@ -160,16 +160,55 @@
     var T = {
       nl: {
         sending: 'Versturen…',
+        checking: 'Even de beveiligingscontrole afwachten…',
         ok: 'Bedankt! We hebben je bericht ontvangen en nemen snel contact op.',
+        okConfirm: 'Bedankt! We hebben je bericht ontvangen. Je krijgt een bevestiging per e-mail en we antwoorden binnen één werkdag.',
         err: 'Het versturen lukte niet automatisch. Stuur je bericht rechtstreeks per mail: ',
         link: 'open je mailprogramma'
       },
       en: {
         sending: 'Sending…',
+        checking: 'Waiting for the security check…',
         ok: 'Thank you! We received your message and will be in touch soon.',
+        okConfirm: 'Thank you! We received your message. You will get a confirmation by email and we reply within one working day.',
         err: "We couldn't send that automatically. Please send your message by email instead: ",
         link: 'open your email app'
       }
+    };
+
+    // Cloudflare Turnstile (anti-spam). Only active when index.html has a site key, and the script is loaded
+    // only once the visitor starts using the form, so most visitors never contact Cloudflare's challenge server.
+    var tsSlot = document.getElementById('ts-slot');
+    var siteKey = tsSlot ? tsSlot.getAttribute('data-sitekey') : '';
+    var tsWidget = null, tsToken = '', tsLoading = false;
+    var loadTurnstile = function () {
+      if (!siteKey || tsLoading) return;
+      tsLoading = true;
+      window.milTurnstileReady = function () {
+        tsWidget = window.turnstile.render(tsSlot, {
+          sitekey: siteKey,
+          appearance: 'interaction-only',
+          theme: root.dataset.theme === 'dark' ? 'dark' : 'light',
+          callback: function (token) { tsToken = token; },
+          'expired-callback': function () { tsToken = ''; },
+          'error-callback': function () { tsToken = ''; }
+        });
+      };
+      var sc = document.createElement('script');
+      sc.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=milTurnstileReady';
+      sc.async = true;
+      sc.defer = true;
+      document.head.appendChild(sc);
+    };
+    form.addEventListener('focusin', loadTurnstile, { once: true });
+    var waitForToken = function (ms) {
+      return new Promise(function (resolve) {
+        var t0 = Date.now();
+        (function poll() {
+          if (tsToken || Date.now() - t0 > ms) return resolve(tsToken);
+          setTimeout(poll, 150);
+        })();
+      });
     };
 
     var buildMailto = function (d) {
@@ -205,18 +244,25 @@
       var t = T[root.lang] || T.nl;
 
       status.className = 'form-status';
-      status.textContent = t.sending;
+      status.textContent = siteKey ? t.checking : t.sending;
       submit.disabled = true;
 
-      fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      loadTurnstile();
+      (siteKey ? waitForToken(15000) : Promise.resolve('')).then(function (token) {
+        status.textContent = t.sending;
+        data.turnstileToken = token;
+        return fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
       }).then(function (res) {
         if (!res.ok) throw new Error('http ' + res.status);
+        return res.json().catch(function () { return {}; });
+      }).then(function (result) {
         form.reset();
         status.className = 'form-status ok';
-        status.textContent = t.ok;
+        status.textContent = result && result.confirmation ? t.okConfirm : t.ok;
       }).catch(function () {
         status.className = 'form-status err';
         status.textContent = t.err;
@@ -227,6 +273,8 @@
         status.appendChild(document.createTextNode('.'));
       }).then(function () {
         submit.disabled = false;
+        // a Turnstile token works once: get a fresh one for a possible next attempt
+        if (tsWidget !== null && window.turnstile) { tsToken = ''; window.turnstile.reset(tsWidget); }
       });
     });
   }

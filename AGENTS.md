@@ -10,7 +10,7 @@ in this repo himself he may override these rules; they exist to keep Bacha's cha
   one short phrase). Short answers. Never paste code at Bacha unless he asks.
 - If a request is unclear, ask **one** short question instead of guessing.
 - Before you start anything bigger than a text edit, say in one or two sentences what you are going to do.
-- Never claim something is "live" until it has been merged and the site shows it (see section 4).
+- Never claim something is "live" until you have seen it on the live site (see section 4).
 
 ## 1. The site in 30 seconds
 
@@ -44,26 +44,40 @@ five unlisted service pages (`dj.html`, `live-musicians.html`, `live-bands.html`
 
 ## 4. How to work (the safe path, every time)
 
-1. Start from the latest `main`. Make your changes on **a branch** (use the one you are given; if you can choose:
-   `content/<short-description>`). **Never push to `main`, never merge, never force-push, never rewrite history.**
+Bacha has approved that you may **push content changes directly to `main`**. Whatever is on `main` goes live by
+itself within about 1-3 minutes, so be careful and follow these steps every time:
+
+1. Start from the latest `main`: `git pull --rebase origin main`.
 2. Make the **smallest change** that does what Bacha asked. Do not tidy up, reformat or refactor other things.
 3. Run the safety check and fix every ERROR it reports:
-   `python3 scripts/check-site.py` (it must end with `OK: safe to commit.`).
+   `python3 scripts/check-site.py` (it must end with `OK: safe to commit.`). **Never push while it reports errors.**
 4. Look at the result if you can: `python3 -m http.server 4173` and open `http://localhost:4173/<page>.html`
    (locally pages need the `.html` ending; on the real site `/privacy` works without it).
-5. Commit with a short English message (`Update DJ page text`), push the branch and **open a pull request** to `main`.
-   Write the pull request description in plain Dutch: what changed, on which pages.
-6. Tell Bacha (in Dutch): what changed, which page to look at, and **"Om dit live te zetten klik je op 'Merge pull
-   request'."** Every pull request gets a **preview of the whole site** after about 1-3 minutes, at
-   `https://<branch-name>-makeitlive.habrakenteun.workers.dev` (slashes in the branch name become `-`, e.g. branch
-   `content/new-role` → `content-new-role-makeitlive.habrakenteun.workers.dev`). Cloudflare also posts it as a comment on
-   the pull request, but that comment can lag, so use the address above. Check it loads and shows the change before you
-   tell Bacha it is ready. Only the pages in the pull request differ from the live site; the preview is not indexed by
-   Google but anyone with the link can open it.
-7. Bacha publishes by merging. You never publish yourself.
+5. Commit with a short English message (`Update DJ page text`), run `git pull --rebase origin main` again and push with
+   `git push origin HEAD:main`. **Never force-push and never rewrite history.** If the push is rejected, pull/rebase and
+   try again; if there is a conflict you cannot resolve in one simple step, stop and ask Tom.
+6. After about 2 minutes **check the live site** (`https://www.makeitlive.agency/<page>`) if you can, and only then tell
+   Bacha it is live. If you cannot open the site, tell him: "Kijk over 2 minuten op de site." In Dutch, tell him what
+   changed and where to look.
+7. **If the live site looks broken or an error shows after your push, undo it immediately**: `git revert <your-commit>`,
+   run the check, push to `main`, and tell Bacha (and that Tom should look at it). A failed build keeps the previous
+   version online, so nothing is lost, but do not leave a broken change on `main`.
 
-If something goes wrong, do **not** try to fix hosting or deployment. Offer to undo your change
-(`git revert` on your branch) and tell Bacha to ask Tom.
+**When to use a branch and pull request instead** (safer, for a visible preview before anything goes live):
+the change is big or touches many pages, you are unsure, or Bacha says things like "laat me het eerst zien". Then:
+work on `content/<short-description>`, push the branch and open a pull request (description in plain Dutch). Every pull
+request gets a **preview of the whole site** after about 1-3 minutes at
+`https://<branch-name>-makeitlive.habrakenteun.workers.dev` (slashes in the branch name become `-`, e.g. branch
+`content/new-role` → `content-new-role-makeitlive.habrakenteun.workers.dev`). Cloudflare also comments it on the pull
+request, but that can lag, so use the address above and check it loads and shows the change. Tell Bacha: **"Klik op
+'Merge pull request' om dit live te zetten."** The preview is not indexed by Google, but anyone with the link can
+open it.
+
+If your environment cannot push to `main` (for example Codex cloud tasks always create their own branch and pull
+request), do the pull-request route and tell Bacha to click "Merge pull request": that is the same as publishing.
+
+If something goes wrong with hosting, deployment or the build itself, do **not** try to fix it. Undo your own change
+(step 7) and tell Bacha to ask Tom.
 
 ## 5. Dutch and English: always both
 
@@ -160,4 +174,4 @@ Say to Bacha in Dutch that this one is for Tom, and why. Do not try a workaround
 - [ ] `python3 scripts/check-site.py` ends with `OK: safe to commit.`
 - [ ] Dutch **and** English both updated; nothing invented; no secrets
 - [ ] Only the files needed for the request changed
-- [ ] Bacha got a short Dutch summary and the "Merge pull request" instruction
+- [ ] Bacha got a short Dutch summary, and you checked the live site after about 2 minutes (or told him to)

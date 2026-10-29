@@ -20,10 +20,10 @@ te kennen.
 
 ## 2. Zo komt iets op de site
 
-1. Codex maakt je wijziging **apart klaar**. Er verandert nog **niets** op de echte site.
-2. Codex meldt dat er een *pull request* klaarstaat (dat is een voorstel op GitHub) en vertelt wat er veranderd is. Is er een voorbeeldlink, kijk dan eerst even mee.
-3. **Tevreden?** Open het voorstel op GitHub en klik op **Merge pull request** en daarna op **Confirm merge**. Na ongeveer 1 tot 2 minuten staat het op www.makeitlive.agency.
-4. **Niet tevreden?** Niet samenvoegen. Zeg tegen Codex wat anders moet, of klik onderaan op **Close pull request**.
+1. Codex maakt je wijziging, controleert hem en zet hem **meteen online**. Dat gaat vanzelf: na ongeveer **2 minuten** staat het op www.makeitlive.agency.
+2. Codex kijkt daarna zelf of het goed staat en meldt het je. Kan dat niet, dan zegt het: "Kijk over 2 minuten op de site."
+3. **Wil je het eerst zien voordat het online gaat?** Zeg dan: *"Zet dit eerst op een voorbeeld, zodat ik het kan bekijken."* Codex maakt dan een voorstel (een *pull request* op GitHub) met een voorbeeldlink. Tevreden? Klik op **Merge pull request** en daarna **Confirm merge**. Niet tevreden? Zeg wat anders moet, of klik op **Close pull request**.
+4. Gebruik die voorbeeld-stap vooral bij **grotere wijzigingen** of als je twijfelt. Een kleine tekstwijziging mag gewoon rechtstreeks.
 
 ## 3. Wat je aan Tom laat
 
@@ -48,5 +48,5 @@ Vraag je zoiets toch aan Codex, dan zegt het dat het voor Tom is. Dat is bedoeld
 
 ## 6. Iets misgegaan?
 
-- **Nog niet samengevoegd:** niets aan de hand, sluit het voorstel (*Close pull request*).
-- **Wel samengevoegd, maar het klopt niet:** zeg tegen Codex "Draai de laatste wijziging terug", of laat het aan Tom weten.
+- **Staat het fout online?** Zeg meteen tegen Codex: *"Draai de laatste wijziging terug."* Dat staat ook binnen ongeveer 2 minuten online. Laat het daarna Tom weten.
+- **Het voorbeeld (preview) klopt niet?** Dan is er nog niets online gekomen: klik op *Close pull request* of vraag Codex om het aan te passen.

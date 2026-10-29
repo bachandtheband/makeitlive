@@ -10,8 +10,9 @@ Landing page for Make It Live — Belgian event agency. Static HTML/CSS/JS, no b
 
 Bacha makes content changes through ChatGPT/Codex. The rules Codex follows are in [`AGENTS.md`](AGENTS.md) (read
 automatically from the repo root) and Bacha's plain-Dutch cheat sheet is [`BACHA.md`](BACHA.md). In short: content
-only, always Dutch **and** English, nothing invented, changes go through a pull request that Bacha merges; mail, DNS,
-Cloudflare/GitHub settings, design and anything touching privacy are for Tom.
+only, always Dutch **and** English, nothing invented. Bacha (and Codex for him) may push content changes straight to
+`main`, after running the check and verifying the live site; for bigger or uncertain changes a branch + pull request with
+a preview link is used. Mail, DNS, Cloudflare/GitHub settings, design and anything touching privacy are for Tom.
 
 `python3 scripts/check-site.py` is the safety net (matching NL/EN texts, closed tags, existing links/images, alt
 text, heavy or raw media, no third-party scripts, and **no changes to Tom-only files** compared with `origin/main`).

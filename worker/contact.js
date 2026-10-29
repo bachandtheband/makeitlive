@@ -6,7 +6,7 @@
 // Settings (Cloudflare dashboard → Workers & Pages → makeitlive → Settings → Variables and Secrets):
 //   RESEND_API_KEY   required — add as a *secret*
 //   CONTACT_FROM     optional — verified sender, default "Make It Live <noreply@makeitlive.agency>"
-//   CONTACT_TO       optional — inbox that receives enquiries, default "hello@makeitlive.agency"
+//   CONTACT_TO       optional — inbox that receives enquiries, default "bookings@makeitlive.agency"
 
 const EVENT_TYPES = ['Corporate', 'Wedding', 'Festival', 'Private party', 'Other'];
 const SERVICES = ['DJ', 'Live musician', 'Live band', 'Performers', 'Photo & video', 'Full event support'];
@@ -62,7 +62,7 @@ export async function handleContact(request, env) {
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: env.CONTACT_FROM || 'Make It Live <noreply@makeitlive.agency>',
-        to: [env.CONTACT_TO || 'hello@makeitlive.agency'],
+        to: [env.CONTACT_TO || 'bookings@makeitlive.agency'],
         reply_to: email,
         subject: `Website — ${type} — ${name}`,
         text,

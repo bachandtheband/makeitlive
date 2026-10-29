@@ -182,7 +182,7 @@
         '',
         d.message
       ].filter(function (l, i) { return l !== '' || i > 3; });
-      return 'mailto:hello@makeitlive.agency?subject=' +
+      return 'mailto:bookings@makeitlive.agency?subject=' +
         encodeURIComponent('Website — ' + d.type + ' — ' + d.name) +
         '&body=' + encodeURIComponent(lines.join('\n'));
     };

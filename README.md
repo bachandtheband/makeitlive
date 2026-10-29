@@ -150,7 +150,7 @@ ffmpeg -i media-inbox/video/clip.mov -an -vf "scale=1280:-2,fps=30" \
 
 ## Contact form
 
-The form posts to `/api/contact`, handled by `worker/contact.js` (run by `worker/index.js`), which emails `hello@makeitlive.agency`
+The form posts to `/api/contact`, handled by `worker/contact.js` (run by `worker/index.js`), which emails `bookings@makeitlive.agency`
 through [Resend](https://resend.com). Until it is configured the function answers 503 and the page falls back to a
 prefilled `mailto:` link, so no enquiry is lost. To switch it on, add in Cloudflare → Workers & Pages → makeitlive →
 Settings → Variables and Secrets:
@@ -158,7 +158,7 @@ Settings → Variables and Secrets:
 | Variable | Required | Value |
 | --- | --- | --- |
 | `RESEND_API_KEY` | yes | API key from Resend, added as a **secret** (and verify `makeitlive.agency` there) |
-| `CONTACT_TO` | no | inbox that receives enquiries (default `hello@makeitlive.agency`) |
+| `CONTACT_TO` | no | inbox that receives enquiries (default `bookings@makeitlive.agency`) |
 | `CONTACT_FROM` | no | verified sender (default `Make It Live <noreply@makeitlive.agency>`) |
 
 Free plan limit: 100,000 Worker requests per day. Plain page views are served as static assets and do not count.

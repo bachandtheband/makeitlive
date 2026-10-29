@@ -62,7 +62,7 @@ BRAND_TXT = """MAKE IT LIVE — BRAND KIT
 ========================
 Belgian event agency for live entertainment: DJs, live artists, bands, performers, photo & video.
 Tagline: You bring the people. We Make It Live.
-Online version: https://makeitlive.agency/brand-kit   |   Questions or other formats: hello@makeitlive.agency
+Online version: https://makeitlive.agency/brand-kit   |   Questions or other formats: bookings@makeitlive.agency
 
 LOGO FILES
   makeitlive-logo-on-dark      white + blue  — use on dark / black backgrounds (primary)

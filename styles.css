@@ -481,6 +481,10 @@ html[data-theme="dark"] .logo-bar,
   background: var(--card, var(--bg-2));
   transition: transform 0.6s var(--ease), box-shadow 0.6s;
 }
+.core-photo {
+  display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover;
+  border-radius: 4px; margin-bottom: 24px;
+}
 .core-card:nth-child(4), .core-card:nth-child(5) { grid-column: span 3; }
 .core-card:nth-child(1) { --card: var(--blush); }
 .core-card:nth-child(2) { --card: var(--sky); }

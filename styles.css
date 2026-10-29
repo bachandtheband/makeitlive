@@ -269,6 +269,7 @@ html[data-theme="dark"] .theme-toggle .i-moon { display: none; }
   --ink: #f2f1ee; --ink-2: rgba(242, 241, 238, 0.86); --ink-3: rgba(242, 241, 238, 0.64);
   --fg-rgb: 242, 241, 238; --line: rgba(242, 241, 238, 0.28);
   --glow: 0 0 30px rgba(var(--blue-rgb), 0.6);
+  --em: var(--gold);   /* bronze is too dark on footage: use the lighter champagne */
   color: var(--ink);
 }
 .hero.has-video .stage { display: none; }

@@ -4,6 +4,9 @@
 // 2. Only when Cloudflare Turnstile is configured AND the visitor passed it: also emails a short confirmation
 //    to the visitor (Reply-To = CONTACT_TO). Without Turnstile nobody can trigger mail to an arbitrary address.
 //
+// 3. When NOTION_TOKEN and NOTION_DATABASE_ID are set: also saves the enquiry as a row in a Notion database (CRM),
+//    see worker/notion.js. A Notion failure never fails the request: the mail is the safe route.
+//
 // Until RESEND_API_KEY is set the handler answers 503 and the page falls back to a prefilled mailto: link, so
 // nothing is lost. Without TURNSTILE_SECRET_KEY the form works as before, minus the confirmation.
 //
@@ -13,7 +16,10 @@
 //   TURNSTILE_SECRET_KEY  enables the bot check (the public site key lives in index.html, data-sitekey)
 //   TURNSTILE_HOSTNAMES   optional, comma-separated hostnames a token may come from, default www.makeitlive.agency + makeitlive.agency
 //   CONTACT_TO            optional, default "bookings@makeitlive.agency"
+//   NOTION_TOKEN, NOTION_DATABASE_ID   optional, both needed to fill the Notion CRM (see worker/notion.js)
 //   CONTACT_FROM          optional, default "Make It Live <noreply@mail.makeitlive.agency>" (domain verified in Resend)
+
+import { saveToNotion, startStatus } from './notion.js';
 
 const EVENT_TYPES = ['Corporate', 'Wedding', 'Festival', 'Private party', 'Other'];
 const SERVICES = ['DJ', 'Live musician', 'Live band', 'Performers', 'Photo & video', 'Full event support'];
@@ -183,6 +189,17 @@ export async function handleContact(request, env, ctx) {
   if (human) {
     const c = confirmationMail({ name, type, date, services, message, lang });
     const job = sendMail(key, { from, to: [email], reply_to: to, subject: c.subject, text: c.text, html: c.html });
+    if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(job); else await job;
+  }
+
+  // CRM row in Notion (Dutch labels, as the team works in Dutch). Errors are logged, never shown to the visitor.
+  if (env.NOTION_TOKEN && env.NOTION_DATABASE_ID) {
+    const job = saveToNotion(env, {
+      name, email, date, message, status: startStatus(message),
+      type: NL.types[type] || type,
+      services: services.map((x) => NL.services[x] || x),
+      lang: lang.toUpperCase()
+    }).catch((e) => console.error(String(e && e.message || e)));
     if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(job); else await job;
   }
   return reply(200, { ok: true, confirmation: human });

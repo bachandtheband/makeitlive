@@ -176,6 +176,7 @@ Settings in Cloudflare → Workers & Pages → makeitlive → Settings → Varia
 | `TURNSTILE_SECRET_KEY` | bot check + confirmation | secret key of the Turnstile widget |
 | `TURNSTILE_HOSTNAMES` | optional | comma-separated hostnames a token may come from; default `www.makeitlive.agency,makeitlive.agency` (`*` turns the check off, for local tests only) |
 | `CONTACT_TO` | optional | default `bookings@makeitlive.agency` |
+| `NOTION_TOKEN`, `NOTION_DATABASE_ID` | optional, both as *secrets* | saves each enquiry as a row in a Notion database (CRM), see `worker/notion.js` for the columns; a Notion failure is only logged, the mail still goes out |
 | `CONTACT_FROM` | optional | default `Make It Live <noreply@mail.makeitlive.agency>` (domain verified in Resend) |
 
 **Turnstile order matters.** The public *site key* (`0x4AAAAAAFrSfd1CyJzEEPsj`, widget hostnames `www.makeitlive.agency` and

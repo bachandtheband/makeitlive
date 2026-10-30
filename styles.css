@@ -333,6 +333,7 @@ html[data-theme="dark"] .hero:not(.has-video)::after { /* vignette */
   color: var(--ink);
   overflow: visible;
 }
+html[data-theme="dark"] .logo { color: var(--blue); }
 .logo-bar {
   fill: var(--blue);
   transform-box: fill-box; transform-origin: 0 50%;

@@ -11,6 +11,7 @@
 // unless noted:
 //   RESEND_API_KEY        required to send anything
 //   TURNSTILE_SECRET_KEY  enables the bot check (the public site key lives in index.html, data-sitekey)
+//   TURNSTILE_HOSTNAMES   optional, comma-separated hostnames a token may come from, default www.makeitlive.agency + makeitlive.agency
 //   CONTACT_TO            optional, default "bookings@makeitlive.agency"
 //   CONTACT_FROM          optional, default "Make It Live <noreply@mail.makeitlive.agency>" (domain verified in Resend)
 
@@ -68,7 +69,7 @@ async function sendMail(key, payload) {
   }
 }
 
-async function verifyTurnstile(secret, token, ip) {
+async function verifyTurnstile(secret, token, ip, allowedHosts) {
   try {
     const form = new FormData();
     form.append('secret', secret);
@@ -76,7 +77,10 @@ async function verifyTurnstile(secret, token, ip) {
     if (ip) form.append('remoteip', ip);
     const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
     const d = await r.json();
-    return d && d.success === true;
+    if (!d || d.success !== true) return false;
+    // The token must have been issued on one of our own hostnames ('*' switches this check off, for local tests)
+    if (allowedHosts.includes('*')) return true;
+    return allowedHosts.includes(String(d.hostname || '').toLowerCase());
   } catch (e) {
     return false;
   }
@@ -147,7 +151,8 @@ export async function handleContact(request, env, ctx) {
   let human = false;
   if (env.TURNSTILE_SECRET_KEY) {
     const token = clean(body.turnstileToken, 2048);
-    if (!token || !(await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, request.headers.get('CF-Connecting-IP')))) {
+    const hosts = (env.TURNSTILE_HOSTNAMES || 'www.makeitlive.agency,makeitlive.agency').split(',').map((h) => h.trim().toLowerCase()).filter(Boolean);
+    if (!token || !(await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, request.headers.get('CF-Connecting-IP'), hosts))) {
       return reply(403, { error: 'captcha' });
     }
     human = true;

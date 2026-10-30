@@ -163,11 +163,12 @@ Settings in Cloudflare → Workers & Pages → makeitlive → Settings → Varia
 | --- | --- | --- |
 | `RESEND_API_KEY` | any email | API key from Resend, restricted to sending on `mail.makeitlive.agency` |
 | `TURNSTILE_SECRET_KEY` | bot check + confirmation | secret key of the Turnstile widget |
+| `TURNSTILE_HOSTNAMES` | optional | comma-separated hostnames a token may come from; default `www.makeitlive.agency,makeitlive.agency` (`*` turns the check off, for local tests only) |
 | `CONTACT_TO` | optional | default `bookings@makeitlive.agency` |
 | `CONTACT_FROM` | optional | default `Make It Live <noreply@mail.makeitlive.agency>` (domain verified in Resend) |
 
-**Turnstile order matters.** The public *site key* goes into `index.html` (`<div id="ts-slot" data-sitekey="…">`) and is
-deployed first; only then add `TURNSTILE_SECRET_KEY`. With the secret set but no site key on the page, every
+**Turnstile order matters.** The public *site key* (`0x4AAAAAAFrSfd1CyJzEEPsj`, widget hostnames `www.makeitlive.agency` and
+`makeitlive.agency`) is in `index.html` (`<div id="ts-slot" data-sitekey="…">`) and is deployed first; only then add `TURNSTILE_SECRET_KEY`. With the secret set but no site key on the page, every
 submission is rejected (403) and visitors only get the mailto fallback. The Turnstile script is loaded only once a
 visitor starts using the form (`main.js`). Test keys for local work: site key `1x00000000000000000000BB`,
 secret `1x0000000000000000000000000000000AA` (always pass).

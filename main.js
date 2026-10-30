@@ -160,7 +160,7 @@
     var T = {
       nl: {
         sending: 'Versturen…',
-        checking: 'Even de beveiligingscontrole afwachten…',
+        checking: "Even de beveiligingscontrole afwachten… Vink het vakje 'Verify you are human' aan als dat verschijnt.",
         ok: 'Bedankt! We hebben je bericht ontvangen en nemen snel contact op.',
         okConfirm: 'Bedankt! We hebben je bericht ontvangen. Je krijgt een bevestiging per e-mail en we antwoorden binnen één werkdag.',
         err: 'Het versturen lukte niet automatisch. Stuur je bericht rechtstreeks per mail: ',
@@ -168,7 +168,7 @@
       },
       en: {
         sending: 'Sending…',
-        checking: 'Waiting for the security check…',
+        checking: "Waiting for the security check… Tick the 'Verify you are human' box if it appears.",
         ok: 'Thank you! We received your message and will be in touch soon.',
         okConfirm: 'Thank you! We received your message. You will get a confirmation by email and we reply within one working day.',
         err: "We couldn't send that automatically. Please send your message by email instead: ",

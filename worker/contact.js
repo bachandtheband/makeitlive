@@ -4,6 +4,9 @@
 // 2. Only when Cloudflare Turnstile is configured AND the visitor passed it: also emails a short confirmation
 //    to the visitor (Reply-To = CONTACT_TO). Without Turnstile nobody can trigger mail to an arbitrary address.
 //
+// 3. When NOTION_TOKEN and NOTION_DATABASE_ID are set: also saves the enquiry as a row in a Notion database (CRM),
+//    see worker/notion.js. A Notion failure never fails the request: the mail is the safe route.
+//
 // Until RESEND_API_KEY is set the handler answers 503 and the page falls back to a prefilled mailto: link, so
 // nothing is lost. Without TURNSTILE_SECRET_KEY the form works as before, minus the confirmation.
 //
@@ -11,8 +14,12 @@
 // unless noted:
 //   RESEND_API_KEY        required to send anything
 //   TURNSTILE_SECRET_KEY  enables the bot check (the public site key lives in index.html, data-sitekey)
+//   TURNSTILE_HOSTNAMES   optional, comma-separated hostnames a token may come from, default www.makeitlive.agency + makeitlive.agency
 //   CONTACT_TO            optional, default "bookings@makeitlive.agency"
+//   NOTION_TOKEN, NOTION_DATABASE_ID   optional, both needed to fill the Notion CRM (see worker/notion.js)
 //   CONTACT_FROM          optional, default "Make It Live <noreply@mail.makeitlive.agency>" (domain verified in Resend)
+
+import { saveToNotion, startStatus } from './notion.js';
 
 const EVENT_TYPES = ['Corporate', 'Wedding', 'Festival', 'Private party', 'Other'];
 const SERVICES = ['DJ', 'Live musician', 'Live band', 'Performers', 'Photo & video', 'Full event support'];
@@ -24,7 +31,7 @@ const NL = {
 
 const TEXT = {
   nl: {
-    subject: 'Bedankt voor je aanvraag — Make It Live',
+    subject: 'Bedankt voor je aanvraag | Make It Live',
     hi: (n) => `Hoi ${n},`,
     intro: 'Bedankt voor je bericht! We hebben je aanvraag goed ontvangen en antwoorden je binnen één werkdag.',
     got: 'Dit hebben we ontvangen:',
@@ -34,7 +41,7 @@ const TEXT = {
     footer: 'Je ontvangt deze mail omdat je het contactformulier op www.makeitlive.agency invulde. We gebruiken je gegevens alleen om je te antwoorden. Meer info: https://www.makeitlive.agency/privacy'
   },
   en: {
-    subject: 'Thank you for your enquiry — Make It Live',
+    subject: 'Thank you for your enquiry | Make It Live',
     hi: (n) => `Hi ${n},`,
     intro: "Thank you for your message! We received your enquiry and will reply within one working day.",
     got: 'This is what we received:',
@@ -68,7 +75,7 @@ async function sendMail(key, payload) {
   }
 }
 
-async function verifyTurnstile(secret, token, ip) {
+async function verifyTurnstile(secret, token, ip, allowedHosts) {
   try {
     const form = new FormData();
     form.append('secret', secret);
@@ -76,7 +83,10 @@ async function verifyTurnstile(secret, token, ip) {
     if (ip) form.append('remoteip', ip);
     const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
     const d = await r.json();
-    return d && d.success === true;
+    if (!d || d.success !== true) return false;
+    // The token must have been issued on one of our own hostnames ('*' switches this check off, for local tests)
+    if (allowedHosts.includes('*')) return true;
+    return allowedHosts.includes(String(d.hostname || '').toLowerCase());
   } catch (e) {
     return false;
   }
@@ -147,7 +157,8 @@ export async function handleContact(request, env, ctx) {
   let human = false;
   if (env.TURNSTILE_SECRET_KEY) {
     const token = clean(body.turnstileToken, 2048);
-    if (!token || !(await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, request.headers.get('CF-Connecting-IP')))) {
+    const hosts = (env.TURNSTILE_HOSTNAMES || 'www.makeitlive.agency,makeitlive.agency').split(',').map((h) => h.trim().toLowerCase()).filter(Boolean);
+    if (!token || !(await verifyTurnstile(env.TURNSTILE_SECRET_KEY, token, request.headers.get('CF-Connecting-IP'), hosts))) {
       return reply(403, { error: 'captcha' });
     }
     human = true;
@@ -160,8 +171,8 @@ export async function handleContact(request, env, ctx) {
     ['Name', name],
     ['Email', email],
     ['Event type', type],
-    ['Date', date || '—'],
-    ['Looking for', services.join(', ') || '—'],
+    ['Date', date || '-'],
+    ['Looking for', services.join(', ') || '-'],
     ['Language', lang]
   ];
   const text = rows.map(([k, v]) => `${k}: ${v}`).join('\n') + '\n\n' + (message || '(no message)');
@@ -171,13 +182,24 @@ export async function handleContact(request, env, ctx) {
     '</table><p style="font-family:Arial,sans-serif;font-size:15px;white-space:pre-wrap">' +
     esc(message || '(no message)') + '</p>';
 
-  const delivered = await sendMail(key, { from, to: [to], reply_to: email, subject: `Website — ${type} — ${name}`, text, html });
+  const delivered = await sendMail(key, { from, to: [to], reply_to: email, subject: `Website | ${type} | ${name}`, text, html });
   if (!delivered) return reply(502, { error: 'upstream' });
 
   // Confirmation to the visitor: only for verified humans, and a failure here never fails the request.
   if (human) {
     const c = confirmationMail({ name, type, date, services, message, lang });
     const job = sendMail(key, { from, to: [email], reply_to: to, subject: c.subject, text: c.text, html: c.html });
+    if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(job); else await job;
+  }
+
+  // CRM row in Notion (Dutch labels, as the team works in Dutch). Errors are logged, never shown to the visitor.
+  if (env.NOTION_TOKEN && env.NOTION_DATABASE_ID) {
+    const job = saveToNotion(env, {
+      name, email, date, message, status: startStatus(message),
+      type: NL.types[type] || type,
+      services: services.map((x) => NL.services[x] || x),
+      lang: lang.toUpperCase()
+    }).catch((e) => console.error(String(e && e.message || e)));
     if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(job); else await job;
   }
   return reply(200, { ok: true, confirmation: human });

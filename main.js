@@ -1,21 +1,8 @@
 (function () {
   var root = document.documentElement;
 
-  var titles = window.MIL_TITLES || {
-    nl: 'Make It Live — You bring the people. We Make It Live.',
-    en: 'Make It Live — You bring the people. We Make It Live.'
-  };
-
-  // ── Language ────────────────────────────────
-  function setLang(lang) {
-    root.lang = lang;
-    document.title = titles[lang];
-    try { localStorage.setItem('mil-lang', lang); } catch (e) {}
-  }
-  document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
-    btn.addEventListener('click', function () { setLang(btn.getAttribute('data-set-lang')); });
-  });
-  setLang(root.lang === 'en' ? 'en' : 'nl');
+  // Every language has its own pages (/ and /en/, see scripts/build-site.mjs); <html lang> says which one this is.
+  var prefix = root.lang === 'en' ? '/en' : '';
 
   // ── Theme (light by default) ────────────────
   var themeMeta = document.querySelector('meta[name="theme-color"]');
@@ -138,7 +125,7 @@
 
   // ── Preview only: make the five service cards open their (unlisted) pages ──
   if (root.classList.contains('show-drafts')) {
-    var pages = ['/dj', '/live-musicians', '/live-bands', '/performers', '/photo-video'];
+    var pages = ['/dj', '/live-musicians', '/live-bands', '/performers', '/photo-video'].map(function (p) { return prefix + p; });
     document.querySelectorAll('.core-card').forEach(function (card, i) {
       if (!pages[i]) return;
       var a = document.createElement('a');
@@ -160,7 +147,7 @@
     var T = {
       nl: {
         sending: 'Versturen…',
-        checking: 'Even de beveiligingscontrole afwachten…',
+        checking: "Even de beveiligingscontrole afwachten… Vink het vakje 'Verify you are human' aan als dat verschijnt.",
         ok: 'Bedankt! We hebben je bericht ontvangen en nemen snel contact op.',
         okConfirm: 'Bedankt! We hebben je bericht ontvangen. Je krijgt een bevestiging per e-mail en we antwoorden binnen één werkdag.',
         err: 'Het versturen lukte niet automatisch. Stuur je bericht rechtstreeks per mail: ',
@@ -168,7 +155,7 @@
       },
       en: {
         sending: 'Sending…',
-        checking: 'Waiting for the security check…',
+        checking: "Waiting for the security check… Tick the 'Verify you are human' box if it appears.",
         ok: 'Thank you! We received your message and will be in touch soon.',
         okConfirm: 'Thank you! We received your message. You will get a confirmation by email and we reply within one working day.',
         err: "We couldn't send that automatically. Please send your message by email instead: ",
@@ -222,7 +209,7 @@
         d.message
       ].filter(function (l, i) { return l !== '' || i > 3; });
       return 'mailto:bookings@makeitlive.agency?subject=' +
-        encodeURIComponent('Website — ' + d.type + ' — ' + d.name) +
+        encodeURIComponent('Website | ' + d.type + ' | ' + d.name) +
         '&body=' + encodeURIComponent(lines.join('\n'));
     };
 

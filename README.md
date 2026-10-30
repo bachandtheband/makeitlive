@@ -1,10 +1,10 @@
 # Make It Live
 
-Landing page for Make It Live — Belgian event agency. Static HTML/CSS/JS, no build step, deployed on Vercel.
+Website for Make It Live, a Belgian event agency. Static HTML/CSS/JS plus a small Cloudflare Worker, one Dutch and one English version of every page.
 
-- `index.html` — all content, in both NL and EN (`data-l="nl"` / `data-l="en"`)
-- `styles.css` — styling
-- `main.js` — language switch, scroll reveals, copy-email
+- `index.html` and the other root `.html` files: all content, in both NL and EN (`data-l="nl"` / `data-l="en"`)
+- `scripts/build-site.mjs` splits them into separate Dutch and English pages (see Languages below)
+- `styles.css` styling, `main.js` scroll reveals, copy-email and the contact form
 
 ## Working with Codex (Bacha)
 
@@ -32,15 +32,26 @@ Every translatable piece of text exists twice, side by side:
 <span data-l="nl">Wat we doen</span><span data-l="en">What we do</span>
 ```
 
-Change both. The inactive language is hidden with CSS based on `<html lang>`.
+Change both. This also works for `<title>`, `<meta name="description">` and `<option>`: put `data-l` on the element itself.
+
+## Languages (one address per language)
+
+Search engines index one language per URL, so the site is not a single page that translates itself. Dutch lives at
+`/` (and `/privacy`, ...), English at `/en/` (and `/en/privacy`, ...). `scripts/build-site.mjs` (run by
+`scripts/build-cloudflare.sh`) reads each root `.html` file and writes both versions to `dist/`: it keeps only the
+matching `data-l` elements, sets `<html lang>`, adds `canonical`, `hreflang` (nl, en, x-default) and `og:url`/`og:locale`,
+prefixes internal links on the English pages with `/en`, turns the NL/EN switch into links to the same page in the other
+language, and writes `sitemap.xml` (home + privacy) and `robots.txt`. `/en/*` has its own `404.html`. There is no
+automatic redirect by browser language (bad for crawlers): Dutch is the default, the switch is in the header.
+Unlisted pages need both `/x` and `/en/x` in `_headers` (noindex).
 
 Anything not ready yet says **Setting the stage**.
 
 ## Run locally
 
 ```bash
-python3 -m http.server 4173        # quick look at the pages (no /api, no clean URLs)
-sh scripts/build-cloudflare.sh && npx wrangler dev   # the real thing: clean URLs, headers, 404 page, contact API
+sh scripts/build-cloudflare.sh && python3 -m http.server -d dist 4173   # quick look: / and /en/ (pages need .html, no /api)
+sh scripts/build-cloudflare.sh && npx wrangler dev                      # the real thing: clean URLs, headers, 404 page, contact API
 ```
 
 ## Deploy (Cloudflare Workers + static assets)
@@ -163,11 +174,13 @@ Settings in Cloudflare → Workers & Pages → makeitlive → Settings → Varia
 | --- | --- | --- |
 | `RESEND_API_KEY` | any email | API key from Resend, restricted to sending on `mail.makeitlive.agency` |
 | `TURNSTILE_SECRET_KEY` | bot check + confirmation | secret key of the Turnstile widget |
+| `TURNSTILE_HOSTNAMES` | optional | comma-separated hostnames a token may come from; default `www.makeitlive.agency,makeitlive.agency` (`*` turns the check off, for local tests only) |
 | `CONTACT_TO` | optional | default `bookings@makeitlive.agency` |
+| `NOTION_TOKEN`, `NOTION_DATABASE_ID` | optional, both as *secrets* | saves each enquiry as a row in a Notion database (CRM), see `worker/notion.js` for the columns; a Notion failure is only logged, the mail still goes out |
 | `CONTACT_FROM` | optional | default `Make It Live <noreply@mail.makeitlive.agency>` (domain verified in Resend) |
 
-**Turnstile order matters.** The public *site key* goes into `index.html` (`<div id="ts-slot" data-sitekey="…">`) and is
-deployed first; only then add `TURNSTILE_SECRET_KEY`. With the secret set but no site key on the page, every
+**Turnstile order matters.** The public *site key* (`0x4AAAAAAFrSfd1CyJzEEPsj`, widget hostnames `www.makeitlive.agency` and
+`makeitlive.agency`) is in `index.html` (`<div id="ts-slot" data-sitekey="…">`) and is deployed first; only then add `TURNSTILE_SECRET_KEY`. With the secret set but no site key on the page, every
 submission is rejected (403) and visitors only get the mailto fallback. The Turnstile script is loaded only once a
 visitor starts using the form (`main.js`). Test keys for local work: site key `1x00000000000000000000BB`,
 secret `1x0000000000000000000000000000000AA` (always pass).

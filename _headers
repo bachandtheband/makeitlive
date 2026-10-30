@@ -17,5 +17,17 @@
   X-Robots-Tag: noindex, nofollow
 /photo-video
   X-Robots-Tag: noindex, nofollow
+/en/join
+  X-Robots-Tag: noindex, nofollow
+/en/dj
+  X-Robots-Tag: noindex, nofollow
+/en/live-musicians
+  X-Robots-Tag: noindex, nofollow
+/en/live-bands
+  X-Robots-Tag: noindex, nofollow
+/en/performers
+  X-Robots-Tag: noindex, nofollow
+/en/photo-video
+  X-Robots-Tag: noindex, nofollow
 /partials/*
   X-Robots-Tag: noindex, nofollow

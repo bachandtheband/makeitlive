@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Live musicians — Make It Live</title>
-  <meta name="description" content="Live musicians bij Make It Live. / Live musicians at Make It Live.">
+  <title data-l="nl">Live musicians | Make It Live</title>
+  <title data-l="en">Live musicians | Make It Live</title>
+  <meta name="description" data-l="nl" content="Live musicians bij Make It Live.">
+  <meta name="description" data-l="en" content="Live musicians at Make It Live.">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#f6f2ec">
   <meta name="color-scheme" content="light dark">
@@ -16,18 +18,13 @@
   <link rel="stylesheet" href="/pages.css">
 
   <script>
-    window.MIL_TITLES = { nl: 'Live musicians — Make It Live', en: 'Live musicians — Make It Live' };
     (function () {
-      var lang = 'nl', theme = 'light', root = document.documentElement;
+      var theme = 'light', root = document.documentElement;
       try {
-        var saved = localStorage.getItem('mil-lang');
-        if (saved === 'nl' || saved === 'en') lang = saved;
-        else if (!/^nl\b/i.test(navigator.language || '')) lang = 'en';
         if (sessionStorage.getItem('mil-theme') === 'dark') theme = 'dark';
         localStorage.removeItem('mil-theme');
         if (localStorage.getItem('mil-notes') === 'off') root.classList.add('hide-notes');
       } catch (e) {}
-      root.lang = lang;
       root.dataset.theme = theme;
       root.classList.add('js');
     })();
@@ -38,7 +35,7 @@
   <div class="spot" aria-hidden="true"></div>
 
   <header class="nav scrolled">
-    <a class="nav-mark" href="/" aria-label="Make It Live — home">
+    <a class="nav-mark" href="/" aria-label="Make It Live">
       <span class="nav-mark-text">MAKE IT LIVE</span><span class="nav-mark-bar"></span>
     </a>
     <nav class="nav-links" aria-label="Main">

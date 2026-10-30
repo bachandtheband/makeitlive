@@ -3,23 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Make It Live — You bring the people. We Make It Live.</title>
-  <meta name="description" content="DJ's, live artists, bands, performers en photo & video voor corporate events, bruiloften en festivals. Make It Live is een Belgisch eventbureau met full event support. You bring the people. We Make It Live.">
+  <title data-l="nl">Make It Live | Eventbureau voor DJ's, live bands en performers</title>
+  <title data-l="en">Make It Live | Event agency for DJs, live bands and performers</title>
+  <meta name="description" data-l="nl" content="Make It Live is een Belgisch eventbureau voor DJ's, live musicians, bands, performers en foto &amp; video, voor corporate events, bruiloften en festivals. You bring the people. We Make It Live.">
+  <meta name="description" data-l="en" content="Make It Live is a Belgian event agency for DJs, live musicians, bands, performers and photo &amp; video, for corporate events, weddings and festivals. You bring the people. We Make It Live.">
   <meta name="theme-color" content="#f6f2ec">
   <meta name="color-scheme" content="light dark">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Make It Live — You bring the people. We Make It Live.">
-  <meta property="og:description" content="DJs, live artists, bands, performers and photo & video for corporate events, weddings and festivals. Belgian event agency.">
-  <meta property="og:url" content="https://www.makeitlive.agency/">
+  <meta property="og:title" content="Make It Live | You bring the people. We Make It Live.">
+  <meta property="og:description" data-l="nl" content="DJ's, live artiesten, bands, performers en foto &amp; video voor corporate events, bruiloften en festivals. Belgisch eventbureau.">
+  <meta property="og:description" data-l="en" content="DJs, live artists, bands, performers and photo &amp; video for corporate events, weddings and festivals. Belgian event agency.">
   <meta property="og:image" content="https://www.makeitlive.agency/assets/og-light.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Make It Live — event agency">
+  <meta property="og:image:alt" content="Make It Live, event agency">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:image" content="https://www.makeitlive.agency/assets/og-light.jpg">
-  <link rel="canonical" href="https://www.makeitlive.agency/">
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,15 +31,11 @@
   <script>
     // Pick language + theme before first paint so there's no flash. Light is the default.
     (function () {
-      var lang = 'nl', theme = 'light', root = document.documentElement;
+      var theme = 'light', root = document.documentElement;
       try {
-        var saved = localStorage.getItem('mil-lang');
-        if (saved === 'nl' || saved === 'en') lang = saved;
-        else if (!/^nl\b/i.test(navigator.language || '')) lang = 'en';
         if (sessionStorage.getItem('mil-theme') === 'dark') theme = 'dark';
         localStorage.removeItem('mil-theme');
       } catch (e) {}
-      root.lang = lang;
       root.dataset.theme = theme;
       root.classList.add('js');
       if (/[?&]preview\b/.test(location.search)) root.classList.add('show-drafts');
@@ -136,7 +133,7 @@
       </h2>
       <p class="lede reveal">
         <span data-l="nl">Daar zijn we in gespecialiseerd: DJ's, live artiesten en content. Eén team, één aanspreekpunt, van het eerste idee tot de laatste track.</span>
-        <span data-l="en">This is what we specialise in: DJs, live artists and content. One team, one point of contact — from the first idea to the last track.</span>
+        <span data-l="en">This is what we specialise in: DJs, live artists and content. One team, one point of contact, from the first idea to the last track.</span>
       </p>
 
       <div class="core">
@@ -151,28 +148,28 @@
           <img class="core-photo" src="/assets/photos/home/live-musicians.webp" alt="A saxophonist performing on stage." width="1600" height="1066" loading="lazy" decoding="async">
           <div>
             <h3>Live musicians</h3>
-            <p><span data-l="nl">Solisten en duo's die je ceremonie, diner of receptie live inkleuren.</span><span data-l="en">Soloists and duos who bring your ceremony, dinner or reception to life.</span></p>
+            <p><span data-l="nl">Solisten en duo's voor je ceremonie, diner of receptie.</span><span data-l="en">Soloists and duos for your ceremony, dinner or reception.</span></p>
           </div>
         </article>
         <article class="core-card reveal">
           <img class="core-photo" src="/assets/photos/home/live-bands.webp" alt="A band posing together with their instruments." width="1600" height="1255" loading="lazy" decoding="async">
           <div>
             <h3>Live bands</h3>
-            <p><span data-l="nl">Een volledige band die podium en zaal meeneemt van de eerste noot.</span><span data-l="en">A full band that takes the stage and the room from the first note.</span></p>
+            <p><span data-l="nl">Een volledige band voor je feest, receptie of festival.</span><span data-l="en">A full band for your party, reception or festival.</span></p>
           </div>
         </article>
         <article class="core-card reveal">
           <img class="core-photo" src="/assets/photos/home/performers.webp" alt="A dancer performing alongside live musicians." width="1066" height="1600" loading="lazy" decoding="async">
           <div>
             <h3>Performers</h3>
-            <p><span data-l="nl">Dansers, acts en showelementen die van een moment een herinnering maken.</span><span data-l="en">Dancers, acts and show elements that turn a moment into a memory.</span></p>
+            <p><span data-l="nl">Dansers, acts en showelementen voor het hoogtepunt van je avond.</span><span data-l="en">Dancers, acts and show elements for the high point of your evening.</span></p>
           </div>
         </article>
         <article class="core-card reveal">
           <img class="core-photo" src="/assets/photos/home/photo-video.webp" alt="An aerial view of an outdoor event illuminated at night." width="1600" height="900" loading="lazy" decoding="async">
           <div>
             <h3>Photo &amp; Video &amp; Content</h3>
-            <p><span data-l="nl">Fotografie, video, reels en aftermovies: content die blijft leven na het event.</span><span data-l="en">Photography, video, reels and aftermovies — content that lives on after the event.</span></p>
+            <p><span data-l="nl">Foto's, video, reels en aftermovies van je event.</span><span data-l="en">Photos, video, reels and aftermovies of your event.</span></p>
           </div>
         </article>
       </div>
@@ -182,11 +179,11 @@
           <p class="support-k">Full event support</p>
           <h3><span data-l="nl">De rest regelen we mee.</span><span data-l="en">We take care of the rest.</span></h3>
           <p>
-            <span data-l="nl">Via ons netwerk van sterke partners hoef je voor geen enkel onderdeel nog ergens anders aan te kloppen.</span>
-            <span data-l="en">Through our network of strong partners you never have to knock on another door for any part of your event.</span>
+            <span data-l="nl">Via ons netwerk van partners regelen we de andere onderdelen van je event. Je houdt één aanspreekpunt.</span>
+            <span data-l="en">Through our network of partners we take care of the other parts of your event. You keep one point of contact.</span>
           </p>
         </div>
-        <ul class="chips">
+        <ul class="support-list">
           <li><span data-l="nl">Technici</span><span data-l="en">Technicians</span></li>
           <li>Sound &amp; Light</li>
           <li><span data-l="nl">Decoratie</span><span data-l="en">Decoration</span></li>
@@ -195,7 +192,7 @@
           <li><span data-l="nl">Eventproductie</span><span data-l="en">Event production</span></li>
           <li>Event experience</li>
           <li><span data-l="nl">Podium &amp; opbouw</span><span data-l="en">Stage &amp; build-up</span></li>
-          <li><span data-l="nl">… en meer</span><span data-l="en">… and more</span></li>
+          <li class="more"><span data-l="nl">En meer</span><span data-l="en">And more</span></li>
         </ul>
       </div>
     </section>
@@ -204,17 +201,17 @@
     <section class="section" id="for">
       <p class="eyebrow reveal"><span data-l="nl">Voor wie</span><span data-l="en">Who for</span></p>
       <h2 class="statement reveal">
-        <span data-l="nl">Jouw event, <em>jouw</em> sfeer.</span>
-        <span data-l="en">Your event, <em>your</em> vibe.</span>
+        <span data-l="nl">Voor elk event de <em>juiste</em> sfeer.</span>
+        <span data-l="en">The <em>right</em> atmosphere for every event.</span>
       </h2>
       <div class="for">
         <div class="for-item reveal">
           <h3>Corporate</h3>
-          <p><span data-l="nl">Recepties, galadiners, teambuildings en lanceringen: professioneel, stipt en op maat.</span><span data-l="en">Receptions, gala dinners, team events and launches — professional, punctual and tailored.</span></p>
+          <p><span data-l="nl">Recepties, galadiners, teambuildings en lanceringen.</span><span data-l="en">Receptions, gala dinners, team events and launches.</span></p>
         </div>
         <div class="for-item reveal">
           <h3>Weddings</h3>
-          <p><span data-l="nl">Van ceremonie tot dansvloer: de muziek en beleving voor jullie grote dag.</span><span data-l="en">From ceremony to dance floor: the music and atmosphere for your big day.</span></p>
+          <p><span data-l="nl">Muziek voor de ceremonie, het diner en de dansvloer.</span><span data-l="en">Music for the ceremony, the dinner and the dance floor.</span></p>
         </div>
         <div class="for-item reveal">
           <h3>Festivals</h3>
@@ -227,7 +224,7 @@
       </div>
     </section>
 
-    <!-- Draft sections (references, testimonials) are injected here only with ?preview — see partials/drafts.html -->
+    <!-- Draft sections (references, testimonials) are injected here only with ?preview, see partials/drafts.html -->
     <div id="drafts-slot"></div>
 
     <!-- CONTACT -->
@@ -251,12 +248,16 @@
           <label class="field">
             <span><span data-l="nl">Type event</span><span data-l="en">Type of event</span> <i>*</i></span>
             <select name="type" required>
-              <option value="" disabled selected>—</option>
+              <option value="" data-l="nl" disabled selected>Kies een type</option>
+              <option value="" data-l="en" disabled selected>Choose a type</option>
               <option value="Corporate">Corporate</option>
-              <option value="Wedding">Wedding</option>
+              <option value="Wedding" data-l="nl">Bruiloft</option>
+              <option value="Wedding" data-l="en">Wedding</option>
               <option value="Festival">Festival</option>
-              <option value="Private party">Private party</option>
-              <option value="Other">Other / Anders</option>
+              <option value="Private party" data-l="nl">Privéfeest</option>
+              <option value="Private party" data-l="en">Private party</option>
+              <option value="Other" data-l="nl">Anders</option>
+              <option value="Other" data-l="en">Other</option>
             </select>
           </label>
           <label class="field">
@@ -311,8 +312,8 @@
           <div>
             <h3><span data-l="nl">Wat gebeurt er nu?</span><span data-l="en">What happens next?</span></h3>
             <p>
-              <span data-l="nl">We lezen je bericht, bellen of mailen je terug en stellen een voorstel op maat samen.</span>
-              <span data-l="en">We read your message, call or email you back, and put together a proposal made for you.</span>
+              <span data-l="nl">We lezen je bericht, bellen of mailen je terug en sturen je een voorstel op maat.</span>
+              <span data-l="en">We read your message, call or email you back and send you a proposal that fits your event.</span>
             </p>
           </div>
         </aside>

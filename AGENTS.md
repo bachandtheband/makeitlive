@@ -17,7 +17,9 @@ in this repo himself he may override these rules; they exist to keep Bacha's cha
 Static website for **www.makeitlive.agency**, hosted on Cloudflare; whatever is on `main` goes live automatically.
 Tagline: **"You bring the people. We Make It Live."** (English in both languages). Core offer: DJ's, live musicians, live
 bands, performers, photo & video & content; everything else is "Full event support" through partners.
-Pages: `index.html` (home), `privacy.html`, `join.html` (open positions, unlisted), `brand-kit.html` (for partners),
+Every page exists in two languages on separate addresses: Dutch at `/` and `/privacy`, English at `/en/` and `/en/privacy`
+(search engines want one language per address). You only edit the files in the root, which hold both languages side by
+side; a build step splits them (`scripts/build-site.mjs`). Pages: `index.html` (home), `privacy.html`, `join.html` (open positions, unlisted), `brand-kit.html` (for partners),
 five unlisted service pages (`dj.html`, `live-musicians.html`, `live-bands.html`, `performers.html`, `photo-video.html`),
 `404.html`. Unlisted = not linked from the site and kept out of search engines on purpose. Do not link to them.
 
@@ -51,8 +53,9 @@ itself within about 1-3 minutes, so be careful and follow these steps every time
 2. Make the **smallest change** that does what Bacha asked. Do not tidy up, reformat or refactor other things.
 3. Run the safety check and fix every ERROR it reports:
    `python3 scripts/check-site.py` (it must end with `OK: safe to commit.`). **Never push while it reports errors.**
-4. Look at the result if you can: `python3 -m http.server 4173` and open `http://localhost:4173/<page>.html`
-   (locally pages need the `.html` ending; on the real site `/privacy` works without it).
+4. Look at the result if you can: `sh scripts/build-cloudflare.sh && python3 -m http.server -d dist 4173`, then open
+   `http://localhost:4173/<page>.html` for Dutch and `http://localhost:4173/en/<page>.html` for English (locally pages
+   need the `.html` ending; on the real site `/privacy` and `/en/privacy` work without it). The home page is `/` and `/en/`.
 5. Commit with a short English message (`Update DJ page text`), run `git pull --rebase origin main` again and push with
    `git push origin HEAD:main`. **Never force-push and never rewrite history.** If the push is rejected, pull/rebase and
    try again; if there is a conflict you cannot resolve in one simple step, stop and ask Tom.
@@ -81,7 +84,8 @@ If something goes wrong with hosting, deployment or the build itself, do **not**
 
 ## 5. Dutch and English: always both
 
-Every visible text exists twice, side by side. The page shows only the language the visitor chose:
+Every visible text exists twice, side by side. The build turns each page into a Dutch and an English page, so a visitor
+only ever gets one language:
 
 ```html
 <span data-l="nl">Wat we doen</span><span data-l="en">What we do</span>
@@ -135,6 +139,9 @@ silent loop use
 ## 8. Style rules (keep the site consistent)
 
 - Light mode is the default; there is a dark mode. Do not add colours, fonts, emoji, animations or icons.
+- **No em dashes (—)** and no other chatbot habits: no "not just X, but Y", no lists of three adjectives, no
+  "unforgettable", "seamless", "bring to life", "turn a moment into a memory". Write plain, concrete sentences, the way a
+  person at the agency would say it. Use a comma, colon or full stop instead of a dash. The check warns about em dashes.
 - Titles are plain text, **no numbering ("01", "02") and no italics**. One emphasised word in a title goes in
   `<em>…</em>` (it only changes colour).
 - Missing content is shown as **`Setting the stage`**, not as lorem ipsum or empty boxes.

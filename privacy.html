@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Privacyverklaring — Make It Live</title>
-  <meta name="description" content="Hoe Make It Live omgaat met persoonsgegevens: wat we verzamelen, waarom, hoelang we het bewaren en welke rechten je hebt. / How Make It Live handles personal data.">
+  <title data-l="nl">Privacyverklaring | Make It Live</title>
+  <title data-l="en">Privacy statement | Make It Live</title>
+  <meta name="description" data-l="nl" content="Hoe Make It Live omgaat met persoonsgegevens: wat we verzamelen, waarom, hoelang we het bewaren en welke rechten je hebt.">
+  <meta name="description" data-l="en" content="How Make It Live handles personal data: what we collect, why, how long we keep it and which rights you have.">
   <meta name="theme-color" content="#f6f2ec">
   <meta name="color-scheme" content="light dark">
-  <link rel="canonical" href="https://www.makeitlive.agency/privacy">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,17 +16,12 @@
   <link rel="stylesheet" href="/styles.css">
 
   <script>
-    window.MIL_TITLES = { nl: 'Privacyverklaring — Make It Live', en: 'Privacy statement — Make It Live' };
     (function () {
-      var lang = 'nl', theme = 'light', root = document.documentElement;
+      var theme = 'light', root = document.documentElement;
       try {
-        var saved = localStorage.getItem('mil-lang');
-        if (saved === 'nl' || saved === 'en') lang = saved;
-        else if (!/^nl\b/i.test(navigator.language || '')) lang = 'en';
         if (sessionStorage.getItem('mil-theme') === 'dark') theme = 'dark';
         localStorage.removeItem('mil-theme');
       } catch (e) {}
-      root.lang = lang;
       root.dataset.theme = theme;
       root.classList.add('js');
     })();
@@ -35,7 +31,7 @@
   <div class="grain" aria-hidden="true"></div>
 
   <header class="nav scrolled">
-    <a class="nav-mark" href="/" aria-label="Make It Live — home">
+    <a class="nav-mark" href="/" aria-label="Make It Live">
       <span class="nav-mark-text">MAKE IT LIVE</span><span class="nav-mark-bar"></span>
     </a>
     <nav class="nav-links" aria-label="Main">
@@ -72,7 +68,7 @@
 
       <h2>Wie is verantwoordelijk?</h2>
       <p>Verwerkingsverantwoordelijke is <strong>Make It Live</strong>, een Belgisch eventbureau.</p>
-      <p><span class="todo">[Rechtsvorm, officiële naam, maatschappelijk adres en ondernemingsnummer — nog aan te vullen]</span></p>
+      <p><span class="todo">[Rechtsvorm, officiële naam, maatschappelijk adres en ondernemingsnummer: nog aan te vullen]</span></p>
       <p>Voor alle vragen over privacy mail je naar <a href="mailto:bookings@makeitlive.agency">bookings@makeitlive.agency</a>.</p>
 
       <h2>Welke gegevens verwerken we, waarom en op welke grond?</h2>
@@ -147,7 +143,7 @@
 
       <h2>Who is responsible?</h2>
       <p>The data controller is <strong>Make It Live</strong>, a Belgian event agency.</p>
-      <p><span class="todo">[Legal form, registered name, address and company number — to be completed]</span></p>
+      <p><span class="todo">[Legal form, registered name, address and company number: to be completed]</span></p>
       <p>For any privacy question, email <a href="mailto:bookings@makeitlive.agency">bookings@makeitlive.agency</a>.</p>
 
       <h2>What data do we process, why, and on what basis?</h2>

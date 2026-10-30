@@ -8,10 +8,11 @@ Checks (python3 standard library only):
   4. images have alt text; photos/videos are not too heavy for the website
   5. no third-party scripts, no iframes without a privacy review, no lorem ipsum
   6. nothing was changed in files that only Tom may change (compared to origin/main)
+  7. the split into /nl and /en pages builds without problems (needs node, same as the real build)
 
 Exit code 0 = fine, 1 = something must be fixed first. Warnings never fail the check.
 """
-import fnmatch, os, re, subprocess, sys
+import fnmatch, os, re, shutil, subprocess, sys, tempfile
 from html.parser import HTMLParser
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -98,6 +99,8 @@ for name in PAGES:
     for s in pg.ext_scripts:
         err(f'{name}  loads an external script ({s[:60]}): not allowed without Tom (privacy: the site promises no tracking)')
     if re.search(r'lorem ipsum', src, re.I): err(f'{name}  still contains "lorem ipsum" filler text')
+    if '\u2014' in re.sub(r'<!--.*?-->', '', src, flags=re.S):
+        warn(f'{name}  contains an em dash (\u2014): use a comma, colon or full stop instead (house style)')
     if name != 'privacy.html' and re.search(r'class="todo"', src): warn(f'{name}  has an unfinished (yellow) TODO marker')
 
 # file sizes
@@ -112,6 +115,18 @@ for base, _, files in os.walk('assets'):
             warn(f'{p}  is {mb * 1024:.0f} KB: photos should be web-optimised (scripts/optimize-photos.sh, usually 100-400 KB)')
         if ext in ('mov', 'heic', 'tif', 'tiff', 'raw', 'cr2', 'nef', 'arw', 'psd', 'ai'):
             err(f'{p}  is an original/raw format and does not belong in the site. Put originals in media-inbox/ (not committed).')
+
+# the language split must build (every page becomes /name and /en/name, see scripts/build-site.mjs)
+if shutil.which('node'):
+    tmp = tempfile.mkdtemp(prefix='mil-build-')
+    try:
+        r = subprocess.run(['node', 'scripts/build-site.mjs', tmp], capture_output=True, text=True)
+        if r.returncode != 0:
+            err('building the Dutch/English pages failed: ' + (r.stderr.strip().splitlines() or ['?'])[-1][:200])
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+else:
+    warn('node is not installed here, so the Dutch/English page build was not tested')
 
 # protected files changed? (compare with origin/main, plus uncommitted work)
 def changed_files():

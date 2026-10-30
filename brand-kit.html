@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Make It Live — Brand kit</title>
-  <meta name="description" content="Logo's, kleuren, lettertypes en richtlijnen voor partners van Make It Live. Logos, colours, type and guidelines for Make It Live partners.">
+  <title data-l="nl">Brand kit | Make It Live</title>
+  <title data-l="en">Brand kit | Make It Live</title>
+  <meta name="description" data-l="nl" content="Logo's, kleuren, lettertypes en richtlijnen voor partners van Make It Live.">
+  <meta name="description" data-l="en" content="Logos, colours, type and guidelines for Make It Live partners.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#f6f2ec">
   <meta name="color-scheme" content="light dark">
@@ -16,15 +18,7 @@
   <link rel="stylesheet" href="/brand-kit.css">
 
   <script>
-    window.MIL_TITLES = { nl: 'Make It Live — Brand kit', en: 'Make It Live — Brand kit' };
     (function () {
-      var lang = 'nl';
-      try {
-        var saved = localStorage.getItem('mil-lang');
-        if (saved === 'nl' || saved === 'en') lang = saved;
-        else if (!/^nl\b/i.test(navigator.language || '')) lang = 'en';
-      } catch (e) {}
-      document.documentElement.lang = lang;
       var theme = 'light';
       try { if (sessionStorage.getItem('mil-theme') === 'dark') theme = 'dark'; localStorage.removeItem('mil-theme'); } catch (e) {}
       document.documentElement.dataset.theme = theme;
@@ -37,7 +31,7 @@
   <div class="spot" aria-hidden="true"></div>
 
   <header class="nav">
-    <a class="nav-mark" href="/" aria-label="Make It Live — home">
+    <a class="nav-mark" href="/" aria-label="Make It Live">
       <span class="nav-mark-text">MAKE IT LIVE</span><span class="nav-mark-bar"></span>
     </a>
     <nav class="nav-links" aria-label="Brand kit">
@@ -88,7 +82,7 @@
       </h2>
       <p class="lede reveal">
         <span data-l="nl">SVG is vectorieel en altijd scherp, gebruik die voor druk. PNG is 2400&nbsp;px breed met transparante achtergrond.</span>
-        <span data-l="en">SVG is vector and always sharp — use it for print. PNG is 2400&nbsp;px wide with a transparent background.</span>
+        <span data-l="en">SVG is vector and always sharp, so use it for print. PNG is 2400&nbsp;px wide with a transparent background.</span>
       </p>
 
       <div class="bk-logos">
@@ -130,7 +124,7 @@
           <figcaption>
             <div>
               <h3><span data-l="nl">Volledig wit</span><span data-l="en">All white</span></h3>
-              <p><span data-l="nl">Eén kleur, op foto's, video of kleurvlakken.</span><span data-l="en">One colour — for photos, video or colour fields.</span></p>
+              <p><span data-l="nl">Eén kleur, op foto's, video of kleurvlakken.</span><span data-l="en">One colour, for photos, video or colour fields.</span></p>
             </div>
             <div class="bk-dl"><a href="/assets/brand/makeitlive-logo-white.svg" download>SVG</a><a href="/assets/brand/makeitlive-logo-white.png" download>PNG</a></div>
           </figcaption>
@@ -141,7 +135,7 @@
           <figcaption>
             <div>
               <h3><span data-l="nl">Volledig zwart</span><span data-l="en">All black</span></h3>
-              <p><span data-l="nl">Eén kleur, voor drukwerk in zwart-wit.</span><span data-l="en">One colour — for black-and-white print.</span></p>
+              <p><span data-l="nl">Eén kleur, voor drukwerk in zwart-wit.</span><span data-l="en">One colour, for black-and-white print.</span></p>
             </div>
             <div class="bk-dl"><a href="/assets/brand/makeitlive-logo-black.svg" download>SVG</a><a href="/assets/brand/makeitlive-logo-black.png" download>PNG</a></div>
           </figcaption>
@@ -152,7 +146,7 @@
           <figcaption>
             <div>
               <h3>Icon</h3>
-              <p><span data-l="nl">Vierkant, voor avatars en profielfoto's.</span><span data-l="en">Square — for avatars and profile pictures.</span></p>
+              <p><span data-l="nl">Vierkant, voor avatars en profielfoto's.</span><span data-l="en">Square, for avatars and profile pictures.</span></p>
             </div>
             <div class="bk-dl"><a href="/assets/brand/makeitlive-icon.svg" download>SVG</a><a href="/assets/brand/makeitlive-icon.png" download>PNG</a></div>
           </figcaption>
@@ -208,7 +202,7 @@
       </h2>
       <p class="lede reveal">
         <span data-l="nl">Klik op een waarde om ze te kopiëren. Blauw is een accent: gebruik het spaarzaam, zoals een spotlight.</span>
-        <span data-l="en">Click a value to copy it. Blue is an accent — use it sparingly, like a spotlight.</span>
+        <span data-l="en">Click a value to copy it. Blue is an accent: use it sparingly, like a spotlight.</span>
       </p>
 
       <div class="bk-swatches">
@@ -238,7 +232,7 @@
           <h3>Violet</h3>
           <button type="button" class="copy" data-copy="#5A3CFF"><span class="copy-idle">#5A3CFF</span><span class="copy-done"><span data-l="nl">Gekopieerd</span><span data-l="en">Copied</span></span></button>
           <button type="button" class="copy" data-copy="rgb(90, 60, 255)"><span class="copy-idle">RGB 90 · 60 · 255</span><span class="copy-done"><span data-l="nl">Gekopieerd</span><span data-l="en">Copied</span></span></button>
-          <p><span data-l="nl">Enkel voor lichteffecten, nooit voor tekst.</span><span data-l="en">Light effects only — never for text.</span></p>
+          <p><span data-l="nl">Enkel voor lichteffecten, nooit voor tekst.</span><span data-l="en">Light effects only, never for text.</span></p>
         </div>
       </div>
 
@@ -282,7 +276,7 @@
         <div class="bk-lightdemo reveal" aria-hidden="true">
           <p class="ld-k"><span data-l="nl">Wat we doen</span><span data-l="en">What we do</span></p>
           <p class="ld-h">Live entertainment that <em>sticks.</em></p>
-          <p class="ld-p"><span data-l="nl">Eén team, één aanspreekpunt, van het eerste idee tot de laatste track.</span><span data-l="en">One team, one point of contact — from the first idea to the last track.</span></p>
+          <p class="ld-p"><span data-l="nl">Eén team, één aanspreekpunt, van het eerste idee tot de laatste track.</span><span data-l="en">One team, one point of contact, from the first idea to the last track.</span></p>
           <div class="ld-row"><span class="ld-btn">Get in touch</span><span class="ld-chip">DJ</span><span class="ld-chip">Live band</span></div>
         </div>
         <div class="reveal">
@@ -331,7 +325,7 @@
       </div>
       <p class="bk-p bk-fallback reveal">
         <span data-l="nl">Geen toegang tot deze lettertypes (bv. in een mailtemplate)? Gebruik Helvetica of Arial, nooit iets speels.</span>
-        <span data-l="en">Can't use these fonts (an email template, say)? Fall back to Helvetica or Arial — never anything playful.</span>
+        <span data-l="en">Can't use these fonts (an email template, say)? Fall back to Helvetica or Arial, never anything playful.</span>
       </p>
     </section>
 
@@ -388,7 +382,7 @@
           <h3 class="bk-sub"><span data-l="nl">De naam schrijven</span><span data-l="en">Writing the name</span></h3>
           <p class="bk-p">
             <span data-l="nl">In lopende tekst: <strong>Make It Live</strong>, drie woorden, elk met hoofdletter. Niet “MakeItLive”, “Make it live” of “MIL”. Het logo zelf staat altijd in hoofdletters.</span>
-            <span data-l="en">In running text: <strong>Make It Live</strong> — three words, each capitalised. Not “MakeItLive”, “Make it live” or “MIL”. The logo itself is always set in capitals.</span>
+            <span data-l="en">In running text: <strong>Make It Live</strong>: three words, each capitalised. Not “MakeItLive”, “Make it live” or “MIL”. The logo itself is always set in capitals.</span>
           </p>
           <h3 class="bk-sub"><span data-l="nl">Samen tonen</span><span data-l="en">Showing it with yours</span></h3>
           <p class="bk-p">
@@ -427,7 +421,7 @@
       </h2>
       <p class="lede reveal">
         <span data-l="nl">Twijfel je of een gebruik klopt, of heb je het logo in een ander formaat nodig? Stuur ons een mailtje, we antwoorden snel.</span>
-        <span data-l="en">Not sure a use is right, or need the logo in another format? Drop us a line — we reply fast.</span>
+        <span data-l="en">Not sure a use is right, or need the logo in another format? Drop us a line, we reply fast.</span>
       </p>
       <div class="mail reveal">
         <a class="mail-link" href="mailto:bookings@makeitlive.agency">bookings@makeitlive.agency</a>

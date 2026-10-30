@@ -25,7 +25,7 @@ const NL = {
 
 const TEXT = {
   nl: {
-    subject: 'Bedankt voor je aanvraag — Make It Live',
+    subject: 'Bedankt voor je aanvraag | Make It Live',
     hi: (n) => `Hoi ${n},`,
     intro: 'Bedankt voor je bericht! We hebben je aanvraag goed ontvangen en antwoorden je binnen één werkdag.',
     got: 'Dit hebben we ontvangen:',
@@ -35,7 +35,7 @@ const TEXT = {
     footer: 'Je ontvangt deze mail omdat je het contactformulier op www.makeitlive.agency invulde. We gebruiken je gegevens alleen om je te antwoorden. Meer info: https://www.makeitlive.agency/privacy'
   },
   en: {
-    subject: 'Thank you for your enquiry — Make It Live',
+    subject: 'Thank you for your enquiry | Make It Live',
     hi: (n) => `Hi ${n},`,
     intro: "Thank you for your message! We received your enquiry and will reply within one working day.",
     got: 'This is what we received:',
@@ -165,8 +165,8 @@ export async function handleContact(request, env, ctx) {
     ['Name', name],
     ['Email', email],
     ['Event type', type],
-    ['Date', date || '—'],
-    ['Looking for', services.join(', ') || '—'],
+    ['Date', date || '-'],
+    ['Looking for', services.join(', ') || '-'],
     ['Language', lang]
   ];
   const text = rows.map(([k, v]) => `${k}: ${v}`).join('\n') + '\n\n' + (message || '(no message)');
@@ -176,7 +176,7 @@ export async function handleContact(request, env, ctx) {
     '</table><p style="font-family:Arial,sans-serif;font-size:15px;white-space:pre-wrap">' +
     esc(message || '(no message)') + '</p>';
 
-  const delivered = await sendMail(key, { from, to: [to], reply_to: email, subject: `Website — ${type} — ${name}`, text, html });
+  const delivered = await sendMail(key, { from, to: [to], reply_to: email, subject: `Website | ${type} | ${name}`, text, html });
   if (!delivered) return reply(502, { error: 'upstream' });
 
   // Confirmation to the visitor: only for verified humans, and a failure here never fails the request.

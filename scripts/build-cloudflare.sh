@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 
 rm -rf dist
 mkdir dist
-cp ./*.css main.js favicon.svg _headers dist/
+cp ./*.css main.js favicon.svg _headers llms.txt dist/
 node scripts/build-site.mjs dist
 cp -R assets partials dist/
 find dist \( -name .gitkeep -o -name .DS_Store \) -delete

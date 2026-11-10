@@ -202,6 +202,7 @@
       var lines = [
         'Name: ' + d.name,
         'Email: ' + d.email,
+        'Mobile: ' + d.phone,
         'Event type: ' + d.type,
         d.date ? 'Date: ' + d.date : '',
         d.services.length ? 'Looking for: ' + d.services.join(', ') : '',
@@ -213,14 +214,28 @@
         '&body=' + encodeURIComponent(lines.join('\n'));
     };
 
+    var phoneInput = form.querySelector('[name="phone"]');
+    var phoneCountry = form.querySelector('[name="phoneCountry"]');
+    var validatePhone = function () {
+      var digits = (phoneCountry.value + phoneInput.value).replace(/\D/g, '');
+      phoneInput.setCustomValidity(digits.length > 15 ? (root.lang === 'en'
+        ? 'Enter no more than 15 digits including the country calling code.'
+        : 'Vul maximaal 15 cijfers in, inclusief de landcode.') : '');
+    };
+    phoneInput.addEventListener('input', validatePhone);
+    phoneCountry.addEventListener('change', validatePhone);
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      validatePhone();
       if (!form.checkValidity()) { form.reportValidity(); return; }
 
       var fd = new FormData(form);
       var data = {
         name: (fd.get('name') || '').toString().trim(),
         email: (fd.get('email') || '').toString().trim(),
+        phoneCountry: (fd.get('phoneCountry') || '').toString(),
+        phone: (fd.get('phone') || '').toString().trim(),
         type: (fd.get('type') || '').toString(),
         date: (fd.get('date') || '').toString(),
         message: (fd.get('message') || '').toString().trim(),
@@ -228,6 +243,7 @@
         website: (fd.get('website') || '').toString(),
         lang: root.lang
       };
+      data.phone = data.phoneCountry + ' ' + data.phone;
       var t = T[root.lang] || T.nl;
 
       status.className = 'form-status';

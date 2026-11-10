@@ -20,6 +20,7 @@ const VERSION = '2022-06-28';
 // Alternative column names, tried in order after the first one
 const ALIASES = {
   email: ['e-mail', 'email', 'mail'],
+  phone: ['gsm', 'gsm-nummer', 'telefoon', 'telefoonnummer', 'phone', 'mobile'],
   type: ['type event', 'event type', 'type'],
   date: ['datum event', 'event date', 'datum', 'date'],
   services: ['diensten', 'services', 'looking for'],
@@ -56,7 +57,8 @@ export function buildProperties(schema, lead) {
     const col = find(key);
     if (!col || value === '' || (Array.isArray(value) && !value.length)) return;
     const t = col.def.type;
-    if (t === 'email') out[col.name] = { email: value };
+    if (t === 'phone_number') out[col.name] = { phone_number: value };
+    else if (t === 'email') out[col.name] = { email: value };
     else if (t === 'rich_text') out[col.name] = { rich_text: text(String(value)) };
     else if (t === 'select') out[col.name] = { select: { name: String(value) } };
     else if (t === 'multi_select') out[col.name] = { multi_select: [].concat(value).map((name) => ({ name: String(name).replace(/,/g, ' ') })) };
@@ -69,6 +71,7 @@ export function buildProperties(schema, lead) {
   };
 
   set('email', lead.email);
+  set('phone', lead.phone || '');
   set('type', lead.type);
   set('date', lead.date);
   set('services', lead.services);

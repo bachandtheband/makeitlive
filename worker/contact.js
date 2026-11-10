@@ -142,13 +142,20 @@ export async function handleContact(request, env, ctx) {
 
   const name = oneLine(body.name, 100);
   const email = oneLine(body.email, 200);
+  const phone = oneLine(body.phone, 40);
+  const phoneCountry = oneLine(body.phoneCountry, 4);
+  const nationalPhone = phone.slice(phoneCountry.length).trim();
+  const phoneDigits = phone.replace(/\D/g, '');
+  const validPhone = /^\+[1-9]\d{0,2}$/.test(phoneCountry) &&
+    phone.startsWith(phoneCountry + ' ') && /^[0-9() .-]+$/.test(nationalPhone) &&
+    nationalPhone.replace(/\D/g, '').length >= 6 && phoneDigits.length <= 15;
   const type = EVENT_TYPES.includes(body.type) ? body.type : '';
   const date = /^\d{4}-\d{2}-\d{2}$/.test(body.date || '') ? body.date : '';
   const message = clean(body.message, 3000);
   const services = (Array.isArray(body.services) ? body.services : []).filter((s) => SERVICES.includes(s));
   const lang = body.lang === 'en' ? 'en' : 'nl';
 
-  if (!name || !type || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return reply(400, { error: 'invalid' });
+  if (!name || !type || !validPhone || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return reply(400, { error: 'invalid' });
 
   const key = env.RESEND_API_KEY;
   if (!key) return reply(503, { error: 'not_configured' });
@@ -170,6 +177,7 @@ export async function handleContact(request, env, ctx) {
   const rows = [
     ['Name', name],
     ['Email', email],
+    ['Mobile', phone],
     ['Event type', type],
     ['Date', date || '-'],
     ['Looking for', services.join(', ') || '-'],
@@ -195,7 +203,7 @@ export async function handleContact(request, env, ctx) {
   // CRM row in Notion (Dutch labels, as the team works in Dutch). Errors are logged, never shown to the visitor.
   if (env.NOTION_TOKEN && env.NOTION_DATABASE_ID) {
     const job = saveToNotion(env, {
-      name, email, date, message, status: startStatus(message),
+      name, email, phone, date, message, status: startStatus(message),
       type: NL.types[type] || type,
       services: services.map((x) => NL.services[x] || x),
       lang: lang.toUpperCase()

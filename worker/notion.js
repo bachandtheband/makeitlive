@@ -9,7 +9,8 @@
 //
 // The database is read first and the row is built from the columns that exist, by name (case-insensitive):
 //   title column (any name)  the visitor's name
-//   E-mail                   email (or text)          Type event   select     Datum event  date
+//   E-mail                   email (or text)          Telefoon     phone or text
+//   Type event               select                   Datum event  date
 //   Diensten                 multi-select             Bericht      text       Taal         select
 //   Status                   select or status         (new rows start as "Nieuw", or "Controleren" for a link in the message)
 // Columns that are missing are skipped, so the row is always saved.
@@ -20,6 +21,7 @@ const VERSION = '2022-06-28';
 // Alternative column names, tried in order after the first one
 const ALIASES = {
   email: ['e-mail', 'email', 'mail'],
+  phone: ['telefoon', 'gsm', 'mobiel', 'mobile', 'phone', 'telefoonnummer'],
   phone: ['gsm', 'gsm-nummer', 'telefoon', 'telefoonnummer', 'phone', 'mobile'],
   type: ['type event', 'event type', 'type'],
   date: ['datum event', 'event date', 'datum', 'date'],
@@ -71,6 +73,7 @@ export function buildProperties(schema, lead) {
   };
 
   set('email', lead.email);
+  set('phone', lead.phone);
   set('phone', lead.phone || '');
   set('type', lead.type);
   set('date', lead.date);

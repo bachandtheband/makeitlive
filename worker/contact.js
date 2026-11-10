@@ -207,8 +207,10 @@ export async function handleContact(request, env, ctx) {
       type: NL.types[type] || type,
       services: services.map((x) => NL.services[x] || x),
       lang: lang.toUpperCase()
-    }).catch((e) => console.error(String(e && e.message || e)));
+    }).then(() => console.log('Notion: row saved')).catch((e) => console.error(String(e && e.message || e)));
     if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(job); else await job;
+  } else {
+    console.warn('Notion: skipped, NOTION_TOKEN and/or NOTION_DATABASE_ID are not set on this Worker');
   }
   return reply(200, { ok: true, confirmation: human });
 }

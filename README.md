@@ -15,6 +15,12 @@ follow are in [`AGENTS.md`](AGENTS.md) (read automatically from the repo root) a
 reverting the commit. What stays: never force-push, never put a secret in the (public) repository, and never invent
 clients, quotes or numbers.
 
+**Pull requests merge themselves:** `.github/workflows/auto-merge.yml` runs `check-site.py` on every pull request from a
+branch in this repo and squash-merges it when the check passes (this is what makes Codex cloud tasks, which always open a
+pull request, go live without a click). Opt out for a preview-first flow with a branch starting with `preview/`, a draft
+pull request, or the label `preview`. On failure the workflow comments on the pull request. It needs no secrets: it uses
+the built-in `GITHUB_TOKEN`.
+
 `python3 scripts/check-site.py` catches mistakes before they go live: matching NL/EN texts, closed tags, existing
 links/images, alt text, heavy or raw media, a failing language build, plus advice (warnings) about em dashes,
 third-party scripts and embeds (which need a matching update of `privacy.html`).

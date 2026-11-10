@@ -143,10 +143,10 @@ export async function handleContact(request, env, ctx) {
   const name = oneLine(body.name, 100);
   const email = oneLine(body.email, 200);
   const phone = oneLine(body.phone, 40);
-  const phoneCountry = oneLine(body.phoneCountry, 4);
+  const phoneCountry = oneLine(body.phoneCountry, 5);
   const nationalPhone = phone.slice(phoneCountry.length).trim();
   const phoneDigits = phone.replace(/\D/g, '');
-  const validPhone = /^\+[1-9]\d{0,2}$/.test(phoneCountry) &&
+  const validPhone = /^\+[1-9]\d{0,3}$/.test(phoneCountry) &&
     phone.startsWith(phoneCountry + ' ') && /^[0-9() .-]+$/.test(nationalPhone) &&
     nationalPhone.replace(/\D/g, '').length >= 6 && phoneDigits.length <= 15;
   const type = EVENT_TYPES.includes(body.type) ? body.type : '';
@@ -179,7 +179,7 @@ export async function handleContact(request, env, ctx) {
     ['Email', email],
     ['Mobile', phone],
     ['Event type', type],
-    ['Date', date || '-'],
+    ['Date', date ? prettyDate(date, lang) : '-'],
     ['Looking for', services.join(', ') || '-'],
     ['Language', lang]
   ];

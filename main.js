@@ -204,7 +204,7 @@
         'Email: ' + d.email,
         'Mobile: ' + d.phone,
         'Event type: ' + d.type,
-        d.date ? 'Date: ' + d.date : '',
+        d.date ? 'Date: ' + new Date(d.date + 'T00:00:00Z').toLocaleDateString(d.lang === 'en' ? 'en-GB' : 'nl-BE', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }) : '',
         d.services.length ? 'Looking for: ' + d.services.join(', ') : '',
         '',
         d.message

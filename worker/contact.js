@@ -17,9 +17,11 @@
 //   TURNSTILE_HOSTNAMES   optional, comma-separated hostnames a token may come from, default www.makeitlive.agency + makeitlive.agency
 //   CONTACT_TO            optional, default "bookings@makeitlive.agency"
 //   NOTION_TOKEN, NOTION_DATABASE_ID   optional, both needed to fill the Notion CRM (see worker/notion.js)
+//   SHEETS_URL, SHEETS_SECRET          optional, both needed to add a row to a Google Sheet (see worker/sheets.js)
 //   CONTACT_FROM          optional, default "Make It Live <noreply@mail.makeitlive.agency>" (domain verified in Resend)
 
 import { saveToNotion, startStatus } from './notion.js';
+import { saveToSheet } from './sheets.js';
 
 const EVENT_TYPES = ['Corporate', 'Wedding', 'Festival', 'Private party', 'Other'];
 const SERVICES = ['DJ', 'Live musician', 'Live band', 'Performers', 'Photo & video', 'Full event support'];
@@ -200,17 +202,22 @@ export async function handleContact(request, env, ctx) {
     if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(job); else await job;
   }
 
-  // CRM row in Notion (Dutch labels, as the team works in Dutch). Errors are logged, never shown to the visitor.
+  // Enquiry in the CRM (Notion) and in the Google Sheet (Dutch labels, as the team works in Dutch). Each is optional and
+  // independent: errors are logged, never shown to the visitor, and the mail above is the safe route.
+  const lead = {
+    name, email, phone, date, message, status: startStatus(message),
+    type: NL.types[type] || type,
+    services: services.map((x) => NL.services[x] || x),
+    lang: lang.toUpperCase()
+  };
+  const run = async (job) => { if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(job); else await job; };
   if (env.NOTION_TOKEN && env.NOTION_DATABASE_ID) {
-    const job = saveToNotion(env, {
-      name, email, phone, date, message, status: startStatus(message),
-      type: NL.types[type] || type,
-      services: services.map((x) => NL.services[x] || x),
-      lang: lang.toUpperCase()
-    }).then(() => console.log('Notion: row saved')).catch((e) => console.error(String(e && e.message || e)));
-    if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(job); else await job;
+    await run(saveToNotion(env, lead).then(() => console.log('Notion: row saved')).catch((e) => console.error(String(e && e.message || e))));
   } else {
     console.warn('Notion: skipped, NOTION_TOKEN and/or NOTION_DATABASE_ID are not set on this Worker');
+  }
+  if (env.SHEETS_URL && env.SHEETS_SECRET) {
+    await run(saveToSheet(env, { ...lead, services: lead.services.join(', ') }).then(() => console.log('Sheet: row saved')).catch((e) => console.error(String(e && e.message || e))));
   }
   return reply(200, { ok: true, confirmation: human });
 }

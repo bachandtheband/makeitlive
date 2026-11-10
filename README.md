@@ -184,6 +184,7 @@ Settings in Cloudflare → Workers & Pages → makeitlive → Settings → Varia
 | `TURNSTILE_HOSTNAMES` | optional | comma-separated hostnames a token may come from; default `www.makeitlive.agency,makeitlive.agency` (`*` turns the check off, for local tests only) |
 | `CONTACT_TO` | optional | default `bookings@makeitlive.agency` |
 | `NOTION_TOKEN`, `NOTION_DATABASE_ID` | optional, both as *secrets* | saves each enquiry as a row in a Notion database (CRM), see `worker/notion.js` for the columns; a Notion failure is only logged, the mail still goes out |
+| `SHEETS_URL`, `SHEETS_SECRET` | optional, both as *secrets* | adds each enquiry as a row to a Google Sheet through the Apps Script web app in `apps-script/sheet-intake.gs` (columns are found by their header in row 1, see the script); a failure is only logged, the mail still goes out |
 | `CONTACT_FROM` | optional | default `Make It Live <noreply@mail.makeitlive.agency>` (domain verified in Resend) |
 
 **Turnstile order matters.** The public *site key* (`0x4AAAAAAFrSfd1CyJzEEPsj`, widget hostnames `www.makeitlive.agency` and
@@ -193,6 +194,18 @@ visitor starts using the form (`main.js`). Test keys for local work: site key `1
 secret `1x0000000000000000000000000000000AA` (always pass).
 
 Free plan limit: 100,000 Worker requests per day. Plain page views are served as static assets and do not count.
+
+### Google Sheet (optional, next to Notion)
+
+1. In the Sheet: Extensions → Apps Script, paste `apps-script/sheet-intake.gs`, save.
+2. Project Settings → Script properties → add `SECRET` with a long password you make up.
+3. Deploy → New deployment → Web app, Execute as *Me*, access *Anyone* → Deploy and allow access. Copy the URL (ends in `/exec`).
+4. Cloudflare → makeitlive → Settings → Variables and Secrets, type **Secret**: `SHEETS_URL` = that URL, `SHEETS_SECRET` = the password. Redeploy.
+5. Submit the form once. Cloudflare → Logs shows `Sheet: row saved` or the reason it failed.
+
+Row 1 of the first tab holds the headers; unknown columns stay empty, so the Sheet can have extra columns. If the Excel
+uses other header names, add them to `ALIASES` in the script (editing the script means a **new version** under
+Deploy → Manage deployments → Edit → New version).
 
 ## Draft sections (references + testimonials)
 

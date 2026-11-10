@@ -1,0 +1,48 @@
+# Pull requests merge themselves. Bacha and Tom work straight on main without approvals, but some tools (Codex cloud
+# tasks) always open a pull request. This workflow runs the site check on the result and, if it passes, squash-merges
+# the pull request, which puts it live like any push to main.
+#
+# Only pull requests from a branch in this repository are handled (so only people with write access; pull requests from
+# forks get a read-only token anyway). To get a preview first instead of an automatic merge: use a branch that starts
+# with `preview/`, open the pull request as a draft, or give it the label `preview`. Then click "Merge pull request" yourself.
+name: Auto-merge pull requests
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  merge:
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.base.ref == 'main' &&
+      !github.event.pull_request.draft &&
+      !startsWith(github.event.pull_request.head.ref, 'preview/') &&
+      !contains(github.event.pull_request.labels.*.name, 'preview')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
+    steps:
+      # checks out the pull request merged into main, i.e. exactly what main would become
+      - uses: actions/checkout@v4
+
+      - name: Site check
+        run: python3 scripts/check-site.py
+
+      - name: Merge
+        run: gh pr merge "$PR_URL" --squash --delete-branch
+
+      - name: Explain a failure on the pull request
+        if: failure()
+        run: >-
+          gh pr comment "$PR_URL" --body "Automatisch samenvoegen is niet gelukt (de site-controle of het samenvoegen
+          gaf een fout). Bekijk de log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

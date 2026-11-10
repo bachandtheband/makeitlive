@@ -23,8 +23,9 @@ data. Codex leest zelf de regels in `AGENTS.md`; jij hoeft die niet te kennen.
 
 1. Codex maakt je wijziging, controleert hem en zet hem **meteen online**. Na ongeveer **2 minuten** staat het op www.makeitlive.agency.
 2. Codex kijkt daarna zelf of het goed staat en meldt het je. Kan dat niet, dan zegt het: "Kijk over 2 minuten op de site."
-3. **Wil je het eerst zien voordat het online gaat?** Zeg dan: *"Zet dit eerst op een voorbeeld, zodat ik het kan bekijken."* Codex maakt dan een voorstel met een voorbeeldlink. Tevreden? Klik op **Merge pull request** en daarna **Confirm merge**.
-4. Dat voorbeeld is optioneel. Ook grote wijzigingen mogen rechtstreeks, want terugdraaien kan altijd.
+3. Werkt Codex in de cloud (op de website van ChatGPT) en maakt het een *pull request*? Ook dan hoef je niets te klikken: een robot op GitHub controleert het voorstel en voegt het binnen ongeveer een minuut zelf samen. Daarna staat het na 1 à 2 minuten online.
+4. **Wil je het eerst zien voordat het online gaat?** Zeg dan: *"Zet dit eerst op een voorbeeld, zodat ik het kan bekijken."* Codex maakt dan een voorstel met een voorbeeldlink dat **niet** vanzelf wordt samengevoegd. Tevreden? Klik op **Merge pull request** en daarna **Confirm merge**.
+5. Dat voorbeeld is optioneel. Ook grote wijzigingen mogen rechtstreeks, want terugdraaien kan altijd.
 
 ## 3. Wat Codex niet kan
 

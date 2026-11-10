@@ -74,11 +74,15 @@ them: be careful, and say in plain words what you changed.
    so. A failed build keeps the previous version online, so nothing is lost. Hosting or build problems you cannot fix
    quickly: revert your change and tell Tom.
 
-A branch and pull request is only for when the owner explicitly wants to see a preview first ("laat me het eerst
-zien"): work on `content/<short-description>`, push the branch, open a pull request (description in plain Dutch) and
-look at `https://<branch-name>-makeitlive.habrakenteun.workers.dev` (slashes in the branch name become `-`; the preview
-is not indexed). Tell the owner to click "Merge pull request". If your environment cannot push to `main` at all (Codex
-cloud tasks always open a pull request), do the same and tell the owner to click "Merge pull request": that is publishing.
+**Pull requests merge themselves.** If your environment cannot push to `main` (Codex cloud tasks always open a pull
+request), just open the pull request: `.github/workflows/auto-merge.yml` runs the site check on it and squash-merges it
+within a minute, which puts it live. Nobody has to click anything. Do check the live site afterwards (step 6) and revert
+if needed. The one exception is a **preview first**, when the owner explicitly asks for it ("laat me het eerst zien"):
+use a branch named `preview/<short-description>` (or open the pull request as a draft, or give it the label `preview`);
+that pull request is not merged automatically. Look at `https://<branch-name>-makeitlive.habrakenteun.workers.dev`
+(slashes in the branch name become `-`; the preview is not indexed) and tell the owner to click "Merge pull request" when
+happy. If the automatic merge fails, the workflow comments on the pull request with a link to the log: fix what the
+check reports (or the merge conflict) and push again.
 
 ## 5. Dutch and English: always both
 

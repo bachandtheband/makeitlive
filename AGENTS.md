@@ -1,86 +1,84 @@
 # AGENTS.md: Make It Live website
 
-You are helping **Bacha**, owner of Make It Live (a Belgian event agency), make **content changes** to its website.
-**Bacha is not technical.** Tom (technical co-owner) handles everything below the line "Ask Tom first". When Tom works
-in this repo himself he may override these rules; they exist to keep Bacha's changes safe.
+You are helping **Bacha** or **Tom**, the two owners of Make It Live (a Belgian event agency), work on its website.
+**They have exactly the same rights: either of them may ask for any change, and nothing needs approval before it goes
+live.** There is no sensitive data on this site, and every change can be undone with `git revert`, so the rule is:
+make the change, push it to `main`, check the live site, and revert if something went wrong. Do not ask for permission
+for things that a revert can fix.
 
-## 0. How to talk to Bacha
+## 0. How to talk
 
-- **Reply in Dutch**, in plain words. No jargon (no "commit", "branch", "diff", "PR", "build" unless you explain it in
-  one short phrase). Short answers. Never paste code at Bacha unless he asks.
-- If a request is unclear, ask **one** short question instead of guessing.
-- Before you start anything bigger than a text edit, say in one or two sentences what you are going to do.
+- **Reply in Dutch**, in plain words, short. Bacha is not technical: no jargon for him (no "commit", "branch", "diff",
+  "PR", "build" unless you explain it in one short phrase) and no code unless he asks. Tom is technical: he may get the
+  details.
+- If a request is unclear, ask **one** short question instead of guessing. Otherwise just do it.
 - Never claim something is "live" until you have seen it on the live site (see section 4).
 
 ## 1. The site in 30 seconds
 
-Static website for **www.makeitlive.agency**, hosted on Cloudflare; whatever is on `main` goes live automatically.
-Tagline: **"You bring the people. We Make It Live."** (English in both languages). Core offer: DJ's, live musicians, live
-bands, performers, photo & video & content; everything else is "Full event support" through partners.
+Static website for **www.makeitlive.agency**, hosted on a Cloudflare Worker; whatever is on `main` goes live by itself
+within about 1-3 minutes. Tagline: **"You bring the people. We Make It Live."** (English in both languages). Core offer:
+DJ's, live musicians, live bands, performers, photo & video & content; everything else is "Full event support" through
+partners.
+
 Every page exists in two languages on separate addresses: Dutch at `/` and `/privacy`, English at `/en/` and `/en/privacy`
 (search engines want one language per address). You only edit the files in the root, which hold both languages side by
-side; a build step splits them (`scripts/build-site.mjs`). Pages: `index.html` (home), `privacy.html`, `join.html` (open positions, unlisted), `brand-kit.html` (for partners),
-five unlisted service pages (`dj.html`, `live-musicians.html`, `live-bands.html`, `performers.html`, `photo-video.html`),
-`404.html`. Unlisted = not linked from the site and kept out of search engines on purpose. Do not link to them.
+side; a build step splits them (`scripts/build-site.mjs`).
 
-## 2. What you may change (content)
+Pages: `index.html` (home), `privacy.html`, `join.html` (open positions), `brand-kit.html` (for partners), five service
+pages (`dj.html`, `live-musicians.html`, `live-bands.html`, `performers.html`, `photo-video.html`), `404.html`.
+`join` and the service pages are currently **unlisted** (not linked from the site, `noindex` in `_headers`): that is a
+choice, not a rule. Making one public is allowed: link to it and remove its two lines (`/x` and `/en/x`) from `_headers`.
 
-- Texts on any page, in **both Dutch and English** (section 5).
-- Open positions on `join.html` (add, edit, remove a role).
-- Brand kit **texts** (`brand-kit.html`), service page texts, questions/answers.
-- Putting real **photos, videos, logos** into the pages (sections 6 and 7).
-- Real, approved references/testimonials (section 3).
-- Fixing typos anywhere (including `privacy.html`, but see below for legal wording).
+How the whole thing fits together (Worker, contact form, Resend, Turnstile, Notion, deploy, domain) is in `README.md`.
 
-## 3. Never invent anything (most important rule)
+## 2. What you may change
+
+**Everything in this repository**: texts, open positions, photos and video, design and CSS, layouts, new pages, renaming
+or removing pages, the contact form and the Worker (`worker/`), build and deploy files (`wrangler.jsonc`, `scripts/`,
+`.github/`, `_headers`, `main.js`), SEO and structured data, the privacy statement. Keep it small and do what was asked.
+
+Things that live **outside the repository** (Cloudflare dashboard settings and secrets, DNS, Resend, Notion, Google
+Workspace, GitHub settings) are changed by whoever has the logins, in those dashboards. A `git revert` does not undo
+them: be careful, and say in plain words what you changed.
+
+## 3. Never invent anything (the one content rule)
 
 - **Never make up** clients, references, testimonials, reviews, quotes, names, team members, numbers, awards, prices,
-  dates or claims. If Bacha did not give it to you, it does not go on the site. Write `Setting the stage` instead, or
-  ask him.
-- A **testimonial** needs a real quote, the person's name and role/company, and Bacha's confirmation that they agreed.
-  A **client logo or name** needs confirmation that it is a real reference and that Make It Live may show it.
-  "Tomorrowland" and "DDMC" are **unconfirmed**: do not show them publicly until Bacha confirms.
-- `partials/drafts.html` holds sample reference/testimonial blocks that are **only visible with `?preview`**. Leave it
-  hidden. To publish real ones, ask Tom first (it changes how the home page is built).
+  dates or claims. If the owner did not give it to you, it does not go on the site. Write `Setting the stage` instead, or
+  ask.
+- A **testimonial** needs a real quote, the person's name and role/company, and the owner's confirmation that they
+  agreed. A **client logo or name** needs confirmation that it is a real reference and that Make It Live may show it.
+  "Tomorrowland" and "DDMC" are **unconfirmed**: do not show them publicly until an owner confirms.
+- `partials/drafts.html` holds sample reference/testimonial blocks that are only visible with `?preview`. To publish real
+  ones, move the approved block into `index.html` (in both languages) with the real details.
 - Do not copy text, photos or music from other websites.
 
-## 4. How to work (the safe path, every time)
-
-Bacha has approved that you may **push content changes directly to `main`**. Whatever is on `main` goes live by
-itself within about 1-3 minutes, so be careful and follow these steps every time:
+## 4. How to work
 
 1. Start from the latest `main`: `git pull --rebase origin main`.
-2. Make the **smallest change** that does what Bacha asked. Do not tidy up, reformat or refactor other things.
-3. Run the safety check and fix every ERROR it reports:
-   `python3 scripts/check-site.py` (it must end with `OK: safe to commit.`). **Never push while it reports errors.**
+2. Make the **smallest change** that does what was asked. Do not tidy up or refactor other things.
+3. Run `python3 scripts/check-site.py` and fix every ERROR it reports (broken HTML, missing files, missing alt text,
+   heavy or raw media, a failing build). Warnings are advice. **Do not push while there are errors.**
 4. Look at the result if you can: `sh scripts/build-cloudflare.sh && python3 -m http.server -d dist 4173`, then open
    `http://localhost:4173/<page>.html` for Dutch and `http://localhost:4173/en/<page>.html` for English (locally pages
-   need the `.html` ending; on the real site `/privacy` and `/en/privacy` work without it). The home page is `/` and `/en/`.
-5. Commit with a short English message (`Update DJ page text`), run `git pull --rebase origin main` again and push with
-   `git push origin HEAD:main`. **Never force-push and never rewrite history.** If the push is rejected, pull/rebase and
-   try again; if there is a conflict you cannot resolve in one simple step, stop and ask Tom.
-6. After about 2 minutes **check the live site** (`https://www.makeitlive.agency/<page>`) if you can, and only then tell
-   Bacha it is live. If you cannot open the site, tell him: "Kijk over 2 minuten op de site." In Dutch, tell him what
-   changed and where to look.
-7. **If the live site looks broken or an error shows after your push, undo it immediately**: `git revert <your-commit>`,
-   run the check, push to `main`, and tell Bacha (and that Tom should look at it). A failed build keeps the previous
-   version online, so nothing is lost, but do not leave a broken change on `main`.
+   need the `.html` ending; the home page is `/` and `/en/`). `npx wrangler dev` gives the real thing (clean URLs, 404s,
+   the contact API).
+5. Commit with a short English message, `git pull --rebase origin main` again and push with `git push origin HEAD:main`.
+   **Push straight to `main`, no pull request and no approval needed.** **Never force-push and never rewrite
+   history**: that is what keeps every change revertable. If the push is rejected, pull/rebase and try again; resolve a
+   conflict yourself, keeping both sides' intent.
+6. After about 2 minutes **check the live site** (`https://www.makeitlive.agency/<page>`) and only then say it is live. If you
+   cannot open the site, say: "Kijk over 2 minuten op de site." Tell the owner in Dutch what changed and where to look.
+7. **If the live site is broken or wrong, undo it at once**: `git revert <commit>`, run the check, push to `main`, say
+   so. A failed build keeps the previous version online, so nothing is lost. Hosting or build problems you cannot fix
+   quickly: revert your change and tell Tom.
 
-**When to use a branch and pull request instead** (safer, for a visible preview before anything goes live):
-the change is big or touches many pages, you are unsure, or Bacha says things like "laat me het eerst zien". Then:
-work on `content/<short-description>`, push the branch and open a pull request (description in plain Dutch). Every pull
-request gets a **preview of the whole site** after about 1-3 minutes at
-`https://<branch-name>-makeitlive.habrakenteun.workers.dev` (slashes in the branch name become `-`, e.g. branch
-`content/new-role` → `content-new-role-makeitlive.habrakenteun.workers.dev`). Cloudflare also comments it on the pull
-request, but that can lag, so use the address above and check it loads and shows the change. Tell Bacha: **"Klik op
-'Merge pull request' om dit live te zetten."** The preview is not indexed by Google, but anyone with the link can
-open it.
-
-If your environment cannot push to `main` (for example Codex cloud tasks always create their own branch and pull
-request), do the pull-request route and tell Bacha to click "Merge pull request": that is the same as publishing.
-
-If something goes wrong with hosting, deployment or the build itself, do **not** try to fix it. Undo your own change
-(step 7) and tell Bacha to ask Tom.
+A branch and pull request is only for when the owner explicitly wants to see a preview first ("laat me het eerst
+zien"): work on `content/<short-description>`, push the branch, open a pull request (description in plain Dutch) and
+look at `https://<branch-name>-makeitlive.habrakenteun.workers.dev` (slashes in the branch name become `-`; the preview
+is not indexed). Tell the owner to click "Merge pull request". If your environment cannot push to `main` at all (Codex
+cloud tasks always open a pull request), do the same and tell the owner to click "Merge pull request": that is publishing.
 
 ## 5. Dutch and English: always both
 
@@ -91,14 +89,16 @@ only ever gets one language:
 <span data-l="nl">Wat we doen</span><span data-l="en">What we do</span>
 ```
 
-- Change **both** versions, and keep them the same in meaning. If Bacha gives only Dutch, write the English yourself
-  (natural, not word-for-word) and tell him you did, or ask for the English.
+- Change **both** versions, and keep them the same in meaning. If you only get Dutch, write the English yourself
+  (natural, not word-for-word) and say so.
 - When you add a paragraph or list, add a Dutch **and** an English copy (`<p data-l="nl">` / `<p data-l="en">`,
-  `<ul data-l="nl">` / `<ul data-l="en">`). The check fails if the counts differ.
+  `<ul data-l="nl">` / `<ul data-l="en">`). The check fails if the counts differ. `data-l` also works on `<title>`,
+  `<meta>` and `<option>`.
 - Write `&amp;` for an ampersand in HTML, and keep curly quotes/apostrophes consistent with the surrounding text.
-- Dutch uses the friendly *je/jij* form, as on the rest of the site. Spell the name **Make It Live** (three words,
-  capitals) in running text.
+- Dutch uses the friendly *je/jij* form. Spell the name **Make It Live** (three words, capitals) in running text.
 - The tagline is **not translated**: it stays "You bring the people. We Make It Live." in both languages.
+- A new page in the root is picked up by the build automatically. Add it to `INDEXED` in `scripts/build-site.mjs` if it
+  should appear in `sitemap.xml`, and to `_headers` (both `/x` and `/en/x`) if it must stay out of search engines.
 
 ## 6. Where things live
 
@@ -109,6 +109,8 @@ only ever gets one language:
 | Photos | `assets/photos/<page-or-general>/` |
 | Videos (short loops only) | `assets/video/<page>/`; the **home hero** is `assets/video/hero.mp4` (+ `hero.webm`), picked up by itself |
 | Client logos | `assets/references/` |
+| Design | `styles.css` (site), `pages.css` (service pages), `brand-kit.css` |
+| Contact form | `index.html` (form), `main.js` (browser), `worker/contact.js` and `worker/notion.js` (server) |
 | Originals / raw files | `media-inbox/` (local only, **never committed**) |
 
 ## 7. Recipes
@@ -117,7 +119,7 @@ only ever gets one language:
 
 **Add or edit an open position** (`join.html`). Copy an existing `<details class="role reveal">…</details>` block,
 change the role name, the intro `<p>` and the `<ul>` lists in both languages, and in the "Apply" link change only the
-role name in the `subject=` part (spaces are `%20`, the dash is `%E2%80%94`). Roles have no numbers.
+role name in the `subject=` part (spaces are `%20`). Roles have no numbers.
 
 **Put a photo in a placeholder.** The dashed boxes on the service pages are placeholders
 (`<div class="slot …">…</div>`). Replace the whole box with:
@@ -132,53 +134,52 @@ silent loop use
 `<video class="slot-media ar-16x9" src="/assets/video/dj/hero-loop.mp4" muted loop playsinline autoplay></video>`.
 
 **Add a client logo.** Only a confirmed reference with permission (section 3). Put an SVG or transparent PNG in
-`assets/references/` named after the client. Where it is shown is a design choice: ask Tom.
+`assets/references/` named after the client.
 
-**Brand kit texts.** Editable in `brand-kit.html`. The logo files and the `.zip` are generated: do not touch them.
+**Brand kit.** Texts are in `brand-kit.html`. The logo files and the `.zip` in `assets/brand/` are generated by
+`scripts/build_brand.py`: change that script and rerun it instead of editing the files by hand.
 
-## 8. Style rules (keep the site consistent)
+## 8. Style rules (consistency, not permission)
 
-- Light mode is the default; there is a dark mode. Do not add colours, fonts, emoji, animations or icons.
+- Light mode is the default; there is a dark mode. Colours are tokens at the top of `styles.css`. Design changes are
+  fine when asked; keep the existing look (classes like `statement`, `lede`, `support-list`, `slot-media`) unless the
+  request is a redesign.
 - **No em dashes (—)** and no other chatbot habits: no "not just X, but Y", no lists of three adjectives, no
   "unforgettable", "seamless", "bring to life", "turn a moment into a memory". Write plain, concrete sentences, the way a
   person at the agency would say it. Use a comma, colon or full stop instead of a dash. The check warns about em dashes.
 - Titles are plain text, **no numbering ("01", "02") and no italics**. One emphasised word in a title goes in
   `<em>…</em>` (it only changes colour).
 - Missing content is shown as **`Setting the stage`**, not as lorem ipsum or empty boxes.
-- Use the existing look (classes like `statement`, `lede`, `chips`, `slot-media`). If you need a new layout or
-  something looks off, ask Tom instead of editing CSS.
 
-## 9. Photos and video rules
+## 9. Photos, video and privacy
 
 - **Optimised files only.** Photos: WebP (or JPG), longest side at most 2000 px, normally 100-400 KB. Videos: short
   silent loops, at most about 10 MB. Anything over 25 MB cannot be hosted at all.
-- **Never commit originals or raw formats** (`.mov`, `.heic`, `.tif`, `.psd`, camera raw). If Bacha sends big or raw
-  files, do not add them; say: "Stuur deze naar Tom, die maakt ze klaar voor de site."
-  `scripts/optimize-photos.sh` (macOS only) turns originals from `media-inbox/photos/<folder>/` into web photos and
-  strips location data. If you cannot run it, stop and ask Tom.
-- **Long films (aftermovies) and DJ sets are not hosted on the site.** They need a YouTube/Vimeo/SoundCloud embed,
-  which sets cookies, so that is an **Ask Tom first** item.
-- Event photos show real people. Ask Bacha whether the guests/artists agreed to being shown, and never leave GPS or
+- **Never commit originals or raw formats** (`.mov`, `.heic`, `.tif`, `.psd`, camera raw): git history is permanent, so a
+  big file stays in the repo forever, even after a revert. Put originals in `media-inbox/` and run
+  `scripts/optimize-photos.sh` (macOS) from `media-inbox/photos/<folder>/`: it makes web photos and strips location data.
+  README has the `ffmpeg` commands for video.
+- **Long films (aftermovies) and DJ sets** are better on YouTube/Vimeo/SoundCloud than self-hosted. Embeds are allowed;
+  they set cookies, so use the privacy-friendly address (`youtube-nocookie.com`) where there is one and update
+  `privacy.html` in the same change.
+- **The privacy statement must stay true.** Anything that adds tracking, cookies, analytics, embeds, chat widgets,
+  newsletter forms or another third-party service or script is allowed, but update `privacy.html` (Dutch and English) in
+  the same change, and mention the new provider under "Met wie delen we gegevens?".
+- Event photos show real people. Ask the owner whether the guests/artists agreed to being shown, and never leave GPS or
   other metadata in a photo.
 
-## 10. Ask Tom first: stop and explain, do not do it yourself
+## 10. Secrets (the one hard stop)
 
-Say to Bacha in Dutch that this one is for Tom, and why. Do not try a workaround. This covers:
+The repository is **public**. **Never write a key, token or password into any file, commit, message or log**, and never
+ask the owner to paste one in chat. Secrets go into the Cloudflare dashboard as type **Secret**
+(Workers & Pages → makeitlive → Settings → Variables and Secrets) by the person who has that login; the Worker reads
+them from `env`. Plain dashboard variables are wiped by every deploy, so defaults belong in the code and real secrets in
+Secrets. If a secret ever lands in the repo, tell Tom immediately: it must be rotated, because reverting does not
+remove it from history.
 
-- **E-mail, the contact form (it also loads Cloudflare Turnstile, the only third-party script on the site), domain, DNS, Cloudflare, GitHub settings, passwords, API keys, secrets.** Never write a
-  key, token or password into any file or message. The contact address `bookings@makeitlive.agency` appears in several
-  files and in the form code: changing it is a **configuration** change for Tom, not a text edit.
-- Files `wrangler.jsonc`, `worker/`, `scripts/`, `.github/`, `_headers`, `main.js`, `.gitignore`, `favicon.svg`,
-  `assets/brand/`, `assets/og-light.jpg`, `AGENTS.md`. The check script refuses changes to these.
-- **CSS and design** (`*.css`), new page layouts, new pages, removing or renaming pages, changing a URL.
-- Making an **unlisted page public** (service pages, `/join`, `/brand-kit`), or adding links to them.
-- **Privacy and legal wording** (`privacy.html`) beyond fixing a typo, and anything that adds tracking, cookies,
-  analytics, embeds, chat widgets, newsletter forms or any third-party script. The site promises visitors it has none.
-- Anything that needs a tool you do not have, or that you are not sure is safe. **When in doubt, ask.**
+## 11. Checklist before every push
 
-## 11. Checklist before every pull request
-
-- [ ] `python3 scripts/check-site.py` ends with `OK: safe to commit.`
+- [ ] `python3 scripts/check-site.py` has no ERROR
 - [ ] Dutch **and** English both updated; nothing invented; no secrets
 - [ ] Only the files needed for the request changed
-- [ ] Bacha got a short Dutch summary, and you checked the live site after about 2 minutes (or told him to)
+- [ ] After about 2 minutes: the live site shows it (if not: revert); the owner got a short Dutch summary

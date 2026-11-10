@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""Safety check for content changes. Run before every commit:  python3 scripts/check-site.py
+"""Safety check for every change. Run before every push:  python3 scripts/check-site.py
 
 Checks (python3 standard library only):
   1. every public page has as many Dutch (data-l="nl") as English (data-l="en") pieces
   2. HTML tags are properly opened and closed
   3. local links, images, scripts and stylesheets point to files that exist
   4. images have alt text; photos/videos are not too heavy for the website
-  5. no third-party scripts, no iframes without a privacy review, no lorem ipsum
-  6. nothing was changed in files that only Tom may change (compared to origin/main)
-  7. the split into /nl and /en pages builds without problems (needs node, same as the real build)
+  5. no lorem ipsum; advice (warnings) about third-party scripts, iframes and em dashes
+  6. the split into /nl and /en pages builds without problems (needs node, same as the real build)
 
-Exit code 0 = fine, 1 = something must be fixed first. Warnings never fail the check.
+Nothing is off limits: every file may be changed by either owner. Exit code 0 = fine, 1 = something is broken and must
+be fixed before pushing. Warnings never fail the check.
 """
-import fnmatch, os, re, shutil, subprocess, sys, tempfile
+import os, re, shutil, subprocess, sys, tempfile
 from html.parser import HTMLParser
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,11 +22,6 @@ PAGES = [f for f in sorted(os.listdir('.')) if f.endswith('.html')] + ['partials
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}
 ALLOWED_MISSING = {'/assets/video/hero.mp4', '/assets/video/hero.webm'}  # optional hero video, added later
 MAX_PHOTO_KB, MAX_VIDEO_MB, MAX_FILE_MB = 600, 10, 25
-
-# Only Tom changes these (hard stop). Matching is on the path relative to the project root.
-PROTECTED = ['wrangler.jsonc', 'worker/*', 'scripts/*', '.github/*', '_headers', '.gitignore', 'main.js',
-             'assets/brand/*', 'assets/og-light.jpg', 'AGENTS.md', 'favicon.svg']
-DESIGN = ['*.css']  # visual design: allowed only when explicitly asked, flagged as a warning
 
 errors, warnings = [], []
 err = lambda m: errors.append(m)
@@ -95,9 +90,9 @@ for name in PAGES:
     for img in pg.imgs:
         if 'alt' not in img: err(f'{name}  image {img.get("src", "?")} has no alt text (use alt="" for purely decorative images)')
     for s in pg.iframes:
-        warn(f'{name}  contains an iframe ({s[:60]}): embeds can set cookies and need a privacy review by Tom first')
+        warn(f'{name}  contains an iframe ({s[:60]}): embeds can set cookies: update privacy.html (NL and EN) in the same change')
     for s in pg.ext_scripts:
-        err(f'{name}  loads an external script ({s[:60]}): not allowed without Tom (privacy: the site promises no tracking)')
+        warn(f'{name}  loads an external script ({s[:60]}): allowed, but update privacy.html (NL and EN) in the same change')
     if re.search(r'lorem ipsum', src, re.I): err(f'{name}  still contains "lorem ipsum" filler text')
     if '\u2014' in re.sub(r'<!--.*?-->', '', src, flags=re.S):
         warn(f'{name}  contains an em dash (\u2014): use a comma, colon or full stop instead (house style)')
@@ -127,24 +122,6 @@ if shutil.which('node'):
         shutil.rmtree(tmp, ignore_errors=True)
 else:
     warn('node is not installed here, so the Dutch/English page build was not tested')
-
-# protected files changed? (compare with origin/main, plus uncommitted work)
-def changed_files():
-    out = set()
-    try:
-        base = subprocess.run(['git', 'rev-parse', '--verify', '-q', 'origin/main'], capture_output=True, text=True).stdout.strip()
-        if base:
-            out |= set(subprocess.run(['git', 'diff', '--name-only', f'{base}...HEAD'], capture_output=True, text=True).stdout.split())
-        out |= {l[3:].strip().split(' -> ')[-1] for l in subprocess.run(['git', 'status', '--porcelain'], capture_output=True, text=True).stdout.splitlines()}
-    except Exception:
-        pass
-    return {c for c in out if c}
-
-for path in sorted(changed_files()):
-    if any(fnmatch.fnmatch(path, pat) for pat in PROTECTED):
-        err(f'{path}  was changed, but only Tom may change this file. Undo that change (git checkout origin/main -- {path}) and ask Tom.')
-    elif any(fnmatch.fnmatch(path, pat) for pat in DESIGN):
-        warn(f'{path}  (design/CSS) was changed: only do this when Bacha explicitly asked for a visual change.')
 
 for w in warnings: print('WARNING', w)
 for e in errors: print('ERROR  ', e)

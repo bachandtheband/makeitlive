@@ -6,17 +6,18 @@ Website for Make It Live, a Belgian event agency. Static HTML/CSS/JS plus a smal
 - `scripts/build-site.mjs` splits them into separate Dutch and English pages (see Languages below)
 - `styles.css` styling, `main.js` scroll reveals, copy-email and the contact form
 
-## Working with Codex (Bacha)
+## Working with Codex (Bacha and Tom)
 
-Bacha makes content changes through ChatGPT/Codex. The rules Codex follows are in [`AGENTS.md`](AGENTS.md) (read
-automatically from the repo root) and Bacha's plain-Dutch cheat sheet is [`BACHA.md`](BACHA.md). In short: content
-only, always Dutch **and** English, nothing invented. Bacha (and Codex for him) may push content changes straight to
-`main`, after running the check and verifying the live site; for bigger or uncertain changes a branch + pull request with
-a preview link is used. Mail, DNS, Cloudflare/GitHub settings, design and anything touching privacy are for Tom.
+Bacha and Tom both make changes through ChatGPT/Codex or Claude Code, and they have the same rights: any file may be
+changed, there is no approval step, and a change goes live by pushing straight to `main`. The rules the assistants
+follow are in [`AGENTS.md`](AGENTS.md) (read automatically from the repo root) and Bacha's plain-Dutch cheat sheet is
+[`BACHA.md`](BACHA.md). The safety net is `git revert`: there is no sensitive data on the site, so a mistake is undone by
+reverting the commit. What stays: never force-push, never put a secret in the (public) repository, and never invent
+clients, quotes or numbers.
 
-`python3 scripts/check-site.py` is the safety net (matching NL/EN texts, closed tags, existing links/images, alt
-text, heavy or raw media, no third-party scripts, and **no changes to Tom-only files** compared with `origin/main`).
-Tom's own changes to those files will show up there as errors: that is expected, the check is for Bacha's branches.
+`python3 scripts/check-site.py` catches mistakes before they go live: matching NL/EN texts, closed tags, existing
+links/images, alt text, heavy or raw media, a failing language build, plus advice (warnings) about em dashes,
+third-party scripts and embeds (which need a matching update of `privacy.html`).
 
 **Previews:** every branch/pull request gets its own preview of the full site at
 `https://<branch-with-dashes>-makeitlive.habrakenteun.workers.dev` (Cloudflare → Workers & Pages → makeitlive →
